@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
-import { CashFlowPeriod, Tranche, TrancheType } from '../types';
+import { CashFlowPeriod, Tranche, TrancheType } from '@/core/types';
 
 interface VisualizerProps {
   data: CashFlowPeriod[];

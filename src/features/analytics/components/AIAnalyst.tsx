@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Sparkles, Loader2, MessageSquare } from 'lucide-react';
-import { AssetPool, Tranche, Scenario } from '../types';
-import { analyzeDealStructure, suggestOptimizations } from '../services/geminiService';
+import { AssetPool, Tranche, Scenario } from '@/core/types';
+import { analyzeDealStructure, suggestOptimizations } from '@/infrastructure/ai/geminiProvider';
 
 interface AIAnalystProps {
   pool: AssetPool;

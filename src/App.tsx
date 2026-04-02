@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Layers, Activity, Settings, TrendingUp, BarChart3, Database, Download } from 'lucide-react';
-import DealInput from './components/DealInput';
-import Visualizer from './components/Visualizer';
-import MetricsTable from './components/MetricsTable';
-import AIAnalyst from './components/AIAnalyst';
-import { AssetPool, Tranche, TrancheType, Scenario, PaymentFrequency } from './types';
-import { runCashFlowEngine } from './utils/calculations';
+import DealInput from '@/features/deal-modeling/components/DealInput';
+import Visualizer from '@/features/visuals/components/Visualizer';
+import MetricsTable from '@/features/analytics/components/MetricsTable';
+import AIAnalyst from '@/features/analytics/components/AIAnalyst';
+import { AssetPool, Tranche, TrancheType, Scenario, PaymentFrequency } from '@/core/types';
+import { runCashFlowEngine } from '@/core/engine/waterfall';
 
 // Default Data
 const DEFAULT_POOL: AssetPool = {

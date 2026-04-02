@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { AssetPool, Tranche, Scenario } from '../types';
+import { Scenario, AssetPool, Tranche } from '@/core/types';
 
 // Safely initialize the AI client
 const apiKey = process.env.API_KEY || '';

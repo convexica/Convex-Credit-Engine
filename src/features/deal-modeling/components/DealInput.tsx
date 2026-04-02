@@ -1,5 +1,5 @@
 import React from 'react';
-import { AssetPool, Tranche, TrancheType, Scenario } from '../types';
+import { AssetPool, Tranche, TrancheType, Scenario } from '@/core/types';
 import { Plus, Trash2, PieChart } from 'lucide-react';
 
 interface DealInputProps {

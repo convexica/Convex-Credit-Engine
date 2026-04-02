@@ -1,4 +1,4 @@
-import { AssetPool, Tranche, Scenario, CashFlowPeriod, TrancheType } from '../types';
+import { AssetPool, Tranche, Scenario, CashFlowPeriod, TrancheType } from '@/core/types';
 
 /**
  * Simplified Sequential Pay Waterfall Engine

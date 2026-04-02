@@ -1,6 +1,6 @@
 import React from 'react';
-import { Tranche, CashFlowPeriod } from '../types';
-import { calculateWAL, calculateIRR } from '../utils/calculations';
+import { Tranche, CashFlowPeriod } from '@/core/types';
+import { calculateWAL, calculateIRR } from '@/core/engine/waterfall';
 
 interface MetricsTableProps {
   tranches: Tranche[];
