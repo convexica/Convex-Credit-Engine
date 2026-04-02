@@ -57,7 +57,7 @@ const DealInput: React.FC<DealInputProps> = ({
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <label className="block text-sm font-medium text-slate-text mb-1">Principal Balance (INR)</label>
+            <label className="block text-sm font-medium text-slate-text mb-1">Principal Balance</label>
             <input
               type="text"
               value={formatNumber(pool.principalBalance)}

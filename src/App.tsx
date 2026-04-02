@@ -139,22 +139,26 @@ function App() {
         </header>
 
         {activeTab === 'dashboard' ? (
-          <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
-            {/* Left Column: Inputs & Analytics */}
-            <div className="xl:col-span-5 space-y-8">
-              <DealInput 
-                pool={pool} setPool={setPool}
-                tranches={tranches} setTranches={setTranches}
-                scenario={scenario} setScenario={setScenario}
-              />
-              <AIAnalyst pool={pool} tranches={tranches} scenario={scenario} />
-              <MetricsTable tranches={tranches} data={cashFlows} />
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+              {/* Left Column: Inputs & AI */}
+              <div className="xl:col-span-5 space-y-8">
+                <DealInput 
+                  pool={pool} setPool={setPool}
+                  tranches={tranches} setTranches={setTranches}
+                  scenario={scenario} setScenario={setScenario}
+                />
+                <AIAnalyst pool={pool} tranches={tranches} scenario={scenario} />
+              </div>
+              
+              {/* Right Column: Visuals */}
+              <div className="xl:col-span-7 space-y-8">
+                <Visualizer data={cashFlows} tranches={tranches} />
+              </div>
             </div>
-            
-            {/* Right Column: Visuals */}
-            <div className="xl:col-span-7 space-y-8">
-               <Visualizer data={cashFlows} tranches={tranches} />
-            </div>
+
+            {/* Bottom Row: Full Width Metrics */}
+            <MetricsTable tranches={tranches} data={cashFlows} />
           </div>
         ) : (
            <div className="space-y-8">
