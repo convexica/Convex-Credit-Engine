@@ -102,9 +102,9 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
       {/* Collateral Performance Chart */}
       <div className="bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm">
         <h3 className="text-lg font-semibold mb-6 text-silver-text">Collateral Performance (Factor & Defaults)</h3>
-        <div className="h-[300px] w-full">
+        <div className="h-[350px] w-full">
           <ResponsiveContainer width="100%" height="100%" key={`area-container-${data.length}`}>
-            <AreaChart data={performanceData} margin={{ top: 10, right: 60, left: 20, bottom: 20 }}>
+            <AreaChart data={performanceData} margin={{ top: 20, right: 80, left: 40, bottom: 40 }}>
               <defs>
                 <linearGradient id="colorFactor" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#1f77b4" stopOpacity={0.4}/>
@@ -117,25 +117,28 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
                 stroke="#94a3b8" 
                 interval={Math.ceil(data.length / 12)} 
                 tick={{ fontSize: 10 }}
+                label={{ value: 'Pool Seasoning (Months)', position: 'insideBottom', offset: -10, fill: '#94a3b8', fontSize: 11 }}
               />
+              {/* Primary Axis: Pool Factor */}
               <YAxis 
                 yId="left"
                 stroke="#1f77b4" 
                 domain={[0, 1]}
                 tickFormatter={(v) => v.toFixed(2)}
-                width={40} 
-                tick={{ fontSize: 10 }} 
-                label={{ value: 'Pool Factor', angle: -90, position: 'insideLeft', fill: '#1f77b4', fontSize: 10, offset: 0 }}
+                width={50} 
+                tick={{ fontSize: 10, fill: '#1f77b4' }} 
+                label={{ value: 'Pool Factor (1.0 = 100%)', angle: -90, position: 'insideLeft', fill: '#1f77b4', fontSize: 11, offset: -25 }}
               />
+              {/* Secondary Axis: Defaults */}
               <YAxis 
                 yId="right"
                 orientation="right"
                 stroke="#d62728" 
                 domain={[0, 'auto']}
-                tickFormatter={(v) => `${v.toFixed(1)}%`}
-                width={40} 
-                tick={{ fontSize: 10 }} 
-                label={{ value: 'Cum. Default %', angle: 90, position: 'insideRight', fill: '#d62728', fontSize: 10, offset: 0 }}
+                tickFormatter={(v) => `${v.toFixed(0)}%`}
+                width={50} 
+                tick={{ fontSize: 10, fill: '#d62728' }} 
+                label={{ value: 'Cumulative Defaults %', angle: 90, position: 'insideRight', fill: '#d62728', fontSize: 11, offset: 10 }}
               />
               <Tooltip 
                 contentStyle={{ backgroundColor: '#1e293b', borderColor: 'rgba(255, 255, 255, 0.1)', color: '#e2e8f0' }} 
@@ -144,7 +147,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
                   name
                 ]}
               />
-              <Legend verticalAlign="top" align="right" height={36} iconType="circle" />
+              <Legend verticalAlign="top" align="center" height={40} iconType="circle" wrapperStyle={{ paddingBottom: '20px' }} />
               <Area 
                 yId="left"
                 type="monotone" 
@@ -153,7 +156,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
                 fillOpacity={1} 
                 fill="url(#colorFactor)" 
                 name="Factor" 
-                strokeWidth={2}
+                strokeWidth={3}
               />
               <Area 
                 yId="right"
@@ -162,7 +165,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
                 stroke="#d62728" 
                 fill="transparent" 
                 name="Cum. Default" 
-                strokeWidth={2}
+                strokeWidth={3}
                 strokeDasharray="5 5"
               />
             </AreaChart>
