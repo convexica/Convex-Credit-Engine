@@ -16,31 +16,32 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
     return () => clearTimeout(timer);
   }, [data]);
 
-  // Institutional Ranking for consistent legend and stack order
-  const tranchePriority: Record<string, number> = {
-    [TrancheType.SENIOR]: 0,
-    [TrancheType.MEZZANINE]: 1,
-    [TrancheType.EQUITY]: 2,
-  };
+  // Institutional Priority: Senior -> Mezzanine -> Equity
+  const seniorTranches = tranches.filter(t => t.type === TrancheType.SENIOR);
+  const mezzTranches = tranches.filter(t => t.type === TrancheType.MEZZANINE);
+  const equityTranches = tranches.filter(t => t.type === TrancheType.EQUITY);
+  
+  // Fixed order for stack and legend
+  const institutionalOrder = [...seniorTranches, ...mezzTranches, ...equityTranches];
 
-  // Sort tranches once for both Bars and Legend
-  const sortedTranches = [...tranches].sort((a, b) => 
-    (tranchePriority[a.type] ?? 99) - (tranchePriority[b.type] ?? 99)
-  );
+  // Hard-mapped colors for consistency
+  const colorMap: Record<string, string> = {
+    [TrancheType.SENIOR]: '#1f77b4',    // Blue
+    [TrancheType.MEZZANINE]: '#ff7f0e',  // Orange
+    [TrancheType.EQUITY]: '#2ca02c',      // Green
+  };
 
   // Transform data for stacked bar chart - START FROM M1
   const chartData = data
-    .filter((d) => d.period > 0) // Skip T0/M0 as it has zero principal
-    .filter((d, i) => i % 3 === 0 || i < 12) // Show high density for first year, then every quarter
+    .filter((d) => d.period > 0) // Strictly skip T0/M0
+    .filter((d, i) => i % 3 === 0 || i < 12) 
     .map(d => {
       const point: any = { period: `M${d.period}`, periodValue: d.period };
-      sortedTranches.forEach(t => {
+      institutionalOrder.forEach(t => {
         point[t.name] = d.trancheCashflows[t.id]?.principal || 0;
       });
       return point;
     });
-
-  const colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d4af37', '#8b5cf6'];
 
   return (
     <div className={`space-y-6 transition-opacity duration-300 ${isUpdating ? 'opacity-50' : 'opacity-100'}`}>
@@ -66,15 +67,15 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
                 verticalAlign="bottom" 
                 align="center" 
                 wrapperStyle={{ paddingTop: '30px' }} 
-                payload={sortedTranches.map((t, i) => ({
+                payload={institutionalOrder.map((t) => ({
                     value: t.name,
                     type: 'rect',
                     id: t.id,
-                    color: colors[i % colors.length]
+                    color: colorMap[t.type] || '#8b5cf6'
                 }))}
               />
-              {sortedTranches.map((t, index) => (
-                <Bar key={t.id} dataKey={t.name} stackId="a" fill={colors[index % colors.length]} />
+              {institutionalOrder.map((t) => (
+                <Bar key={t.id} dataKey={t.name} stackId="a" fill={colorMap[t.type] || '#8b5cf6'} />
               ))}
             </BarChart>
           </ResponsiveContainer>
