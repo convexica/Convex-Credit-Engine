@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, Suspense, lazy } from 'react';
 import { Layers, Activity, Settings, TrendingUp, BarChart3, Database, Download, PieChart, Loader2 } from 'lucide-react';
 import DealInput from '@/components/DealInput';
-const Visualizer = lazy(() => import('@/components/Visualizer'));
+import Visualizer from '@/components/Visualizer';
 import MetricsTable from '@/components/MetricsTable';
 import AIAnalyst from '@/components/AIAnalyst';
 import ExecutiveSummary from '@/components/ExecutiveSummary';
