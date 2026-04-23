@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Sparkles, Loader2, MessageSquare } from 'lucide-react';
-import { AssetPool, Tranche, Scenario } from '@/core/types';
-import { analyzeDealStructure, suggestOptimizations } from '@/infrastructure/ai/geminiProvider';
+import { AssetPool, Tranche, Scenario } from '@/types';
+import { analyzeDealStructure, suggestOptimizations } from '@/services/geminiProvider';
 
 interface AIAnalystProps {
   pool: AssetPool;
@@ -67,7 +67,7 @@ const AIAnalyst: React.FC<AIAnalystProps> = ({ pool, tranches, scenario }) => {
         </div>
       ) : (
         <div className="text-center py-8 text-slate-text text-sm">
-          <p>Run analysis to get insights on credit enhancement and risks from Gemini 3.</p>
+          <p>Run analysis to get insights on credit enhancement and risks from AI analyst.</p>
         </div>
       )}
     </div>

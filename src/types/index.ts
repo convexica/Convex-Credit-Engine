@@ -26,6 +26,7 @@ export interface Tranche {
   spread: number; // Spread over benchmark (bps)
   rating: string;
   description?: string;
+  price: number; // Price as % of par (e.g., 100 for par)
 }
 
 export interface Scenario {
@@ -33,6 +34,9 @@ export interface Scenario {
   cdr: number; // Constant Default Rate (%)
   severity: number; // Loss Severity / (1 - Recovery Rate) (%)
   delinquencyLag: number; // Months
+  servicingFee: number; // Annual Servicing Fee (%)
+  recoveryLag: number; // Months to Recovery
+  turboTriggerPct?: number; // Cumulative Default % that triggers Senior Principal Redirection
 }
 
 export interface CashFlowPeriod {
@@ -43,6 +47,7 @@ export interface CashFlowPeriod {
   poolDefaultAmount: number;
   poolLoss: number;
   poolRecovery: number;
+  excessSpread: number; // Residual cash after all collections and fees
   
   trancheCashflows: Record<string, {
     interest: number;

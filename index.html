@@ -4,30 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Convex Credit Engine - Structured Credit Analytics</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              'convexica-gold': '#d4af37',
-              'deep-navy': '#0f172a',
-              'charcoal': '#1e293b',
-              'silver-text': '#e2e8f0',
-              'slate-text': '#94a3b8',
-              'inst-blue': '#1f77b4',
-              'strat-orange': '#ff7f0e',
-              'res-green': '#2ca02c',
-              'risk-red': '#d62728',
-              'white-subtle': 'rgba(255, 255, 255, 0.05)',
-            },
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-            },
-          }
-        }
-      }
-    </script>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
       body {
@@ -51,21 +27,9 @@
         background: rgba(212, 175, 55, 0.5);
       }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "lucide-react": "https://esm.sh/lucide-react@^0.560.0",
-    "@google/genai": "https://esm.sh/@google/genai@^1.33.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.1/",
-    "react/": "https://esm.sh/react@^19.2.1/",
-    "react": "https://esm.sh/react@^19.2.1",
-    "recharts": "https://esm.sh/recharts@^3.5.1"
-  }
-}
-</script>
-<link rel="stylesheet" href="/src/index.css">
+<link rel="stylesheet" href="/src/styles/index.css">
 </head>
-  <body>
+  <body class="bg-deep-navy text-silver-text font-sans antialiased">
     <div id="root"></div>
   <script type="module" src="/src/index.tsx"></script>
 </body>

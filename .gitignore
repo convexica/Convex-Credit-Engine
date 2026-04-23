@@ -32,3 +32,6 @@ dist-ssr/
 metadata.json
 migrated_prompt_history/
 .gemini/
+
+# Local Netlify folder
+.netlify
