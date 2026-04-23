@@ -63,16 +63,20 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
                 contentStyle={{ backgroundColor: '#1e293b', borderColor: 'rgba(255, 255, 255, 0.1)', color: '#e2e8f0' }} 
                 formatter={(v: number) => Math.round(v).toLocaleString()} 
               />
-              <Legend 
-                verticalAlign="bottom" 
-                align="center" 
-                wrapperStyle={{ paddingTop: '30px' }} 
-                payload={institutionalOrder.map((t) => ({
-                    value: t.name,
-                    type: 'rect',
-                    id: t.id,
-                    color: colorMap[t.type] || '#8b5cf6'
-                }))}
+              <Legend
+                verticalAlign="bottom"
+                align="center"
+                wrapperStyle={{ paddingTop: '30px' }}
+                content={() => (
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', paddingTop: '16px' }}>
+                    {institutionalOrder.map((t) => (
+                      <span key={t.id} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#94a3b8' }}>
+                        <span style={{ display: 'inline-block', width: '12px', height: '12px', backgroundColor: colorMap[t.type] || '#8b5cf6', borderRadius: '2px' }} />
+                        {t.name}
+                      </span>
+                    ))}
+                  </div>
+                )}
               />
               {institutionalOrder.map((t) => (
                 <Bar key={t.id} dataKey={t.name} stackId="a" fill={colorMap[t.type] || '#8b5cf6'} />
