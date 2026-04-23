@@ -31,9 +31,9 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
     [TrancheType.EQUITY]: '#2ca02c',      // Green
   };
 
-  // Transform data for stacked bar chart - START FROM M1
-  const chartData = data
-    .filter((d) => d.period > 0) // Strictly skip T0/M0
+  // 1. Transform data for Principal Waterfall - START FROM M1
+  const waterfallData = data
+    .filter((d) => d.period > 0)
     .filter((d, i) => i % 3 === 0 || i < 12) 
     .map(d => {
       const point: any = { period: `M${d.period}`, periodValue: d.period };
@@ -43,13 +43,26 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
       return point;
     });
 
+  // 2. Pre-calculate performance metrics for Collateral chart - START FROM M0
+  let runningDefaultTotal = 0;
+  const performanceData = data.map((d) => {
+    runningDefaultTotal += d.poolDefaultAmount;
+    return {
+      ...d,
+      displayPeriod: d.period === 0 ? 'M0' : `M${d.period}`,
+      factor: d.poolBalanceEnd / data[0].poolBalanceStart,
+      cumDefaultPct: (runningDefaultTotal / data[0].poolBalanceStart) * 100
+    };
+  });
+
   return (
     <div className={`space-y-6 transition-opacity duration-300 ${isUpdating ? 'opacity-50' : 'opacity-100'}`}>
+      {/* Principal Waterfall Chart */}
       <div className="bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm">
         <h3 className="text-lg font-semibold mb-6 text-silver-text">Principal Waterfall (Stack)</h3>
         <div className="h-[350px] w-full">
           <ResponsiveContainer width="100%" height="100%" key={`bar-container-${data.length}`}>
-            <BarChart data={chartData} margin={{ top: 10, right: 30, left: 60, bottom: 60 }}>
+            <BarChart data={waterfallData} margin={{ top: 10, right: 30, left: 60, bottom: 60 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" vertical={false} />
               <XAxis 
                 dataKey="period" 
@@ -86,11 +99,12 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
         </div>
       </div>
 
+      {/* Collateral Performance Chart */}
       <div className="bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm">
         <h3 className="text-lg font-semibold mb-6 text-silver-text">Collateral Performance (Factor & Defaults)</h3>
         <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%" key={`area-container-${data.length}`}>
-            <AreaChart data={data} margin={{ top: 10, right: 60, left: 20, bottom: 20 }}>
+            <AreaChart data={performanceData} margin={{ top: 10, right: 60, left: 20, bottom: 20 }}>
               <defs>
                 <linearGradient id="colorFactor" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#1f77b4" stopOpacity={0.4}/>
@@ -99,13 +113,11 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" vertical={false} />
               <XAxis 
-                dataKey="period" 
+                dataKey="displayPeriod" 
                 stroke="#94a3b8" 
                 interval={Math.ceil(data.length / 12)} 
-                tickFormatter={(v) => v === 0 ? 'T0' : `M${v}`}
                 tick={{ fontSize: 10 }}
               />
-              {/* Left Y-Axis: Pool Factor (0 to 1.0) */}
               <YAxis 
                 yId="left"
                 stroke="#1f77b4" 
@@ -115,7 +127,6 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
                 tick={{ fontSize: 10 }} 
                 label={{ value: 'Pool Factor', angle: -90, position: 'insideLeft', fill: '#1f77b4', fontSize: 10, offset: 0 }}
               />
-              {/* Right Y-Axis: Cumulative Defaults % */}
               <YAxis 
                 yId="right"
                 orientation="right"
@@ -137,7 +148,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
               <Area 
                 yId="left"
                 type="monotone" 
-                dataKey={(d) => d.poolBalanceEnd / data[0].poolBalanceStart} 
+                dataKey="factor" 
                 stroke="#1f77b4" 
                 fillOpacity={1} 
                 fill="url(#colorFactor)" 
@@ -147,10 +158,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
               <Area 
                 yId="right"
                 type="monotone" 
-                dataKey={(d, i) => {
-                  const cumDefault = data.slice(0, i + 1).reduce((sum, p) => sum + p.poolDefaultAmount, 0);
-                  return (cumDefault / data[0].poolBalanceStart) * 100;
-                }} 
+                dataKey="cumDefaultPct" 
                 stroke="#d62728" 
                 fill="transparent" 
                 name="Cum. Default" 
