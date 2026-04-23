@@ -5,6 +5,7 @@ const Visualizer = lazy(() => import('@/components/Visualizer'));
 import MetricsTable from '@/components/MetricsTable';
 import AIAnalyst from '@/components/AIAnalyst';
 import ExecutiveSummary from '@/components/ExecutiveSummary';
+import DataReport from '@/components/DataReport';
 const YieldCurveModule = lazy(() => import('@/components/YieldCurveModule'));
 const SectorBenchmarkModule = lazy(() => import('@/components/SectorBenchmarkModule'));
 import { AssetPool, Tranche, TrancheType, Scenario, PaymentFrequency } from '@/types';
@@ -206,57 +207,11 @@ function App() {
                 transition={{ duration: 0.3 }}
                 className="space-y-8"
              >
-               <div className="bg-charcoal p-6 rounded-xl border border-white-subtle">
-                 <div className="flex justify-between items-center mb-6">
-                   <h2 className="text-xl font-bold text-silver-text">Detailed Cash Flow Report</h2>
-                   <button 
-                     onClick={downloadCSV}
-                     className="flex items-center gap-2 px-4 py-2 bg-convexica-gold hover:bg-convexica-gold/80 text-deep-navy rounded-lg text-sm font-bold transition-colors"
-                   >
-                     <Download className="w-4 h-4" /> Download CSV
-                   </button>
-                 </div>
-                 <div className="overflow-x-auto">
-                   <table className="w-full text-xs text-right text-slate-text font-mono">
-                     <thead className="bg-slate-900 text-silver-text">
-                        <tr>
-                          <th className="p-3 text-left">Period</th>
-                          <th className="p-3">Pool Bal</th>
-                          <th className="p-3 text-inst-blue">Interest</th>
-                          <th className="p-3 text-strat-orange">Principal</th>
-                          <th className="p-3 text-risk-red">Defaults</th>
-                          {tranches.map(t => (
-                            <React.Fragment key={t.id}>
-                               <th className="p-3 border-l border-white-subtle">{t.name} Int</th>
-                               <th className="p-3">{t.name} Prin</th>
-                            </React.Fragment>
-                          ))}
-                        </tr>
-                     </thead>
-                     <tbody>
-                        {cashFlows.slice(0, 24).map((row) => (
-                          <tr key={row.period} className="border-b border-white-subtle hover:bg-slate-700/20">
-                             <td className="p-3 text-left text-silver-text">M{row.period}</td>
-                             <td className="p-3">{Math.round(row.poolBalanceStart).toLocaleString()}</td>
-                             <td className="p-3 text-inst-blue/80">{Math.round(row.poolInterest).toLocaleString()}</td>
-                             <td className="p-3 text-strat-orange/80">{Math.round(row.poolPrincipal).toLocaleString()}</td>
-                             <td className="p-3 text-risk-red/80">{Math.round(row.poolDefaultAmount).toLocaleString()}</td>
-                             {tranches.map(t => {
-                               const flow = row.trancheCashflows[t.id];
-                               return (
-                                 <React.Fragment key={t.id}>
-                                    <td className="p-3 border-l border-white-subtle">{Math.round(flow?.interest || 0).toLocaleString()}</td>
-                                    <td className="p-3 text-silver-text font-bold">{Math.round(flow?.principal || 0).toLocaleString()}</td>
-                                 </React.Fragment>
-                               )
-                             })}
-                          </tr>
-                        ))}
-                     </tbody>
-                   </table>
-                   <div className="p-4 text-center text-slate-text italic">Showing first 24 months only for brevity in report view.</div>
-                 </div>
-               </div>
+               <DataReport 
+                 cashFlows={cashFlows} 
+                 tranches={tranches} 
+                 onDownload={downloadCSV} 
+               />
             </motion.div>
           )}
 

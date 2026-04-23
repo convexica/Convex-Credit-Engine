@@ -33,6 +33,7 @@ export const runCashFlowEngine = (
   const p0: CashFlowPeriod = {
     period: 0,
     poolBalanceStart: pool.principalBalance,
+    poolBalanceEnd: pool.principalBalance,
     poolInterest: 0,
     poolPrincipal: 0,
     poolDefaultAmount: 0,
@@ -96,6 +97,7 @@ export const runCashFlowEngine = (
     const periodFlow: CashFlowPeriod = {
       period: t,
       poolBalanceStart: startBalance,
+      poolBalanceEnd: currentPoolBalance,
       poolInterest: scheduledInterest,
       poolPrincipal: totalPrincipalAvailable,
       poolDefaultAmount: defaults,

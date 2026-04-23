@@ -42,6 +42,7 @@ export interface Scenario {
 export interface CashFlowPeriod {
   period: number;
   poolBalanceStart: number;
+  poolBalanceEnd: number;
   poolInterest: number;
   poolPrincipal: number; // Scheduled + Prepay
   poolDefaultAmount: number;
