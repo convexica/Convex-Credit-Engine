@@ -101,7 +101,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
 
       {/* Collateral Performance Chart */}
       <div className="bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm">
-        <h3 className="text-lg font-semibold mb-6 text-silver-text">Collateral Performance (Factor & Defaults)</h3>
+        <h3 className="text-lg font-semibold mb-6 text-silver-text">Collateral Performance (Normalized Balance View)</h3>
         <div className="h-[350px] w-full">
           <ResponsiveContainer width="100%" height="100%" key={`area-container-${data.length}`}>
             <AreaChart data={performanceData} margin={{ top: 20, right: 80, left: 40, bottom: 40 }}>
@@ -119,7 +119,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
                 tick={{ fontSize: 10 }}
                 label={{ value: 'Pool Seasoning (Months)', position: 'insideBottom', offset: -10, fill: '#94a3b8', fontSize: 11 }}
               />
-              {/* Primary Axis: Pool Factor */}
+              {/* Normalized Axes - Both locked to [0, 1] for relative magnitude story */}
               <YAxis 
                 yId="left"
                 stroke="#1f77b4" 
@@ -127,23 +127,22 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
                 tickFormatter={(v) => v.toFixed(2)}
                 width={50} 
                 tick={{ fontSize: 10, fill: '#1f77b4' }} 
-                label={{ value: 'Pool Factor (1.0 = 100%)', angle: -90, position: 'insideLeft', fill: '#1f77b4', fontSize: 11, offset: -25 }}
+                label={{ value: 'Pool Factor (Remaining %)', angle: -90, position: 'insideLeft', fill: '#1f77b4', fontSize: 11, offset: -25 }}
               />
-              {/* Secondary Axis: Defaults */}
               <YAxis 
                 yId="right"
                 orientation="right"
                 stroke="#d62728" 
-                domain={[0, 'auto']}
-                tickFormatter={(v) => `${v.toFixed(0)}%`}
+                domain={[0, 1]}
+                tickFormatter={(v) => `${(v * 100).toFixed(0)}%`}
                 width={50} 
                 tick={{ fontSize: 10, fill: '#d62728' }} 
-                label={{ value: 'Cumulative Defaults %', angle: 90, position: 'insideRight', fill: '#d62728', fontSize: 11, offset: 10 }}
+                label={{ value: 'Cumulative Defaults (% of Orig.)', angle: 90, position: 'insideRight', fill: '#d62728', fontSize: 11, offset: 10 }}
               />
               <Tooltip 
                 contentStyle={{ backgroundColor: '#1e293b', borderColor: 'rgba(255, 255, 255, 0.1)', color: '#e2e8f0' }} 
                 formatter={(v: number, name: string) => [
-                  name === 'Factor' ? v.toFixed(4) : `${v.toFixed(2)}%`,
+                  name === 'Factor' ? v.toFixed(4) : `${(v * 100).toFixed(2)}%`,
                   name
                 ]}
               />
@@ -161,9 +160,9 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
               <Area 
                 yId="right"
                 type="monotone" 
-                dataKey="cumDefaultPct" 
+                dataKey={(d: any) => d.cumDefaultPct / 100} 
                 stroke="#d62728" 
-                fill="transparent" 
+                fill="rgba(214, 39, 40, 0.1)" 
                 name="Cum. Default" 
                 strokeWidth={3}
                 strokeDasharray="5 5"
