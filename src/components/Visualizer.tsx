@@ -16,26 +16,29 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
     return () => clearTimeout(timer);
   }, [data]);
 
-  // Transform data for stacked bar chart
-  const chartData = data.filter((d, i) => i === 0 || i % 3 === 0).map(d => {
-    const point: any = { period: d.period === 0 ? 'T0' : `M${d.period}`, periodValue: d.period };
-    const sortedTranches = [...tranches].sort((a, b) => {
-      const order = { [TrancheType.SENIOR]: 1, [TrancheType.MEZZANINE]: 2, [TrancheType.EQUITY]: 3 };
-      return (order[a.type] || 99) - (order[b.type] || 99);
-    });
-    sortedTranches.forEach(t => {
-      point[t.name] = d.trancheCashflows[t.id]?.principal || 0;
-    });
-    return point;
-  });
+  // Institutional Ranking for consistent legend and stack order
+  const tranchePriority: Record<string, number> = {
+    [TrancheType.SENIOR]: 0,
+    [TrancheType.MEZZANINE]: 1,
+    [TrancheType.EQUITY]: 2,
+  };
 
-  // Force Legend Order explicitly: Senior -> Mezz -> Equity
-  const legendOrder = ['senior', 'mezzanine', 'equity'];
-  const sortedTranchesForLegend = [...tranches].sort((a, b) => {
-      const idxA = legendOrder.findIndex(o => a.type.toLowerCase().includes(o));
-      const idxB = legendOrder.findIndex(o => b.type.toLowerCase().includes(o));
-      return (idxA === -1 ? 99 : idxA) - (idxB === -1 ? 99 : idxB);
-  });
+  // Sort tranches once for both Bars and Legend
+  const sortedTranches = [...tranches].sort((a, b) => 
+    (tranchePriority[a.type] ?? 99) - (tranchePriority[b.type] ?? 99)
+  );
+
+  // Transform data for stacked bar chart - START FROM M1
+  const chartData = data
+    .filter((d) => d.period > 0) // Skip T0/M0 as it has zero principal
+    .filter((d, i) => i % 3 === 0 || i < 12) // Show high density for first year, then every quarter
+    .map(d => {
+      const point: any = { period: `M${d.period}`, periodValue: d.period };
+      sortedTranches.forEach(t => {
+        point[t.name] = d.trancheCashflows[t.id]?.principal || 0;
+      });
+      return point;
+    });
 
   const colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d4af37', '#8b5cf6'];
 
@@ -46,14 +49,13 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
         <div className="h-[350px] w-full">
           <ResponsiveContainer width="100%" height="100%" key={`bar-container-${data.length}`}>
             <BarChart data={chartData} margin={{ top: 10, right: 30, left: 60, bottom: 60 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" vertical={false} />
               <XAxis 
                 dataKey="period" 
                 stroke="#94a3b8" 
                 interval="auto"
                 height={60}
                 tick={{ fontSize: 10, fill: '#94a3b8' }}
-                label={{ value: 'Period', position: 'insideBottom', offset: 0, fill: '#94a3b8', fontSize: 10 }} 
               />
               <YAxis stroke="#94a3b8" tickFormatter={(v) => v.toLocaleString()} width={80} tick={{ fontSize: 10 }} />
               <Tooltip 
@@ -64,15 +66,14 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
                 verticalAlign="bottom" 
                 align="center" 
                 wrapperStyle={{ paddingTop: '30px' }} 
-                // We map specifically to ensure order is locked
-                payload={sortedTranchesForLegend.map((t, i) => ({
+                payload={sortedTranches.map((t, i) => ({
                     value: t.name,
                     type: 'rect',
                     id: t.id,
                     color: colors[i % colors.length]
                 }))}
               />
-              {sortedTranchesForLegend.map((t, index) => (
+              {sortedTranches.map((t, index) => (
                 <Bar key={t.id} dataKey={t.name} stackId="a" fill={colors[index % colors.length]} />
               ))}
             </BarChart>
