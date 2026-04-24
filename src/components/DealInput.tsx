@@ -75,7 +75,7 @@ const DealInput: React.FC<DealInputProps> = ({
                <span className="text-[10px] font-bold text-res-green uppercase tracking-tighter">Healthy</span>
             </div>
           </div>
-          <div className="space-y-6">
+          <div className="space-y-6 flex-grow">
             <div>
               <label className="block text-xs uppercase font-bold text-slate-text/70 mb-2 tracking-widest">Principal Balance</label>
               <input
@@ -95,19 +95,18 @@ const DealInput: React.FC<DealInputProps> = ({
                 <input type="number" value={pool.wam} onChange={(e) => setPool({ ...pool, wam: Number(e.target.value) })} className="w-full bg-deep-navy border border-white-subtle/50 rounded-lg px-3 py-2.5 text-white focus:ring-2 focus:ring-convexica-gold/50 outline-none text-base" />
               </div>
             </div>
-            </div>
-          </div>
-          
-          <div className="mt-10 pt-6 border-t border-white-subtle/5">
-            <h3 className="text-[10px] uppercase font-bold text-slate-text/40 tracking-widest mb-4">Pool Composition Metrics</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-3 bg-deep-navy/30 rounded-xl border border-white-subtle/10">
-                <div className="text-[10px] text-slate-text/50 uppercase mb-1">Spread (WAC-Index)</div>
-                <div className="text-sm font-mono font-bold text-inst-blue">{(pool.wac - 6.5).toFixed(2)}%</div>
-              </div>
-              <div className="p-3 bg-deep-navy/30 rounded-xl border border-white-subtle/10">
-                <div className="text-[10px] text-slate-text/50 uppercase mb-1">Maturity Horizon</div>
-                <div className="text-sm font-mono font-bold text-white">{(pool.wam / 12).toFixed(1)} Yrs</div>
+
+            <div className="mt-auto pt-6 border-t border-white-subtle/5">
+              <h3 className="text-[10px] uppercase font-bold text-slate-text/40 tracking-widest mb-4">Pool Composition Metrics</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 bg-deep-navy/30 rounded-xl border border-white-subtle/10">
+                  <div className="text-[10px] text-slate-text/50 uppercase mb-1">Spread (WAC-Index)</div>
+                  <div className="text-sm font-mono font-bold text-inst-blue">{(pool.wac - 6.5).toFixed(2)}%</div>
+                </div>
+                <div className="p-3 bg-deep-navy/30 rounded-xl border border-white-subtle/10">
+                  <div className="text-[10px] text-slate-text/50 uppercase mb-1">Maturity Horizon</div>
+                  <div className="text-sm font-mono font-bold text-white">{(pool.wam / 12).toFixed(1)} Yrs</div>
+                </div>
               </div>
             </div>
           </div>
