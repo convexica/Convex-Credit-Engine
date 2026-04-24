@@ -214,14 +214,15 @@ const DealInput: React.FC<DealInputProps> = ({
         
         <div className="space-y-3">
            {/* Headers */}
-           <div className="grid grid-cols-10 gap-4 px-4 pb-2 text-xs uppercase font-extrabold text-slate-text/50 tracking-widest border-b border-white-subtle/10">
-              <div className="col-span-2">Name / Type</div>
+           <div className="grid grid-cols-12 gap-4 px-4 pb-2 text-[10px] uppercase font-extrabold text-slate-text/40 tracking-[0.1em] border-b border-white-subtle/10">
+              <div className="col-span-2">Tranche Name</div>
+              <div className="col-span-2">Class Type</div>
               <div className="col-span-1 text-center">Rating</div>
-              <div className="col-span-1 text-right">% Pool</div>
+              <div className="col-span-1 text-right">Pool %</div>
               <div className="col-span-3 text-right">Original Balance</div>
               <div className="col-span-1 text-right">Coupon</div>
               <div className="col-span-1 text-right">Subord</div>
-              <div className="col-span-1 flex justify-end">Actions</div>
+              <div className="col-span-1 flex justify-end"></div>
            </div>
 
           {tranches.map((tranche, idx) => {
@@ -235,44 +236,63 @@ const DealInput: React.FC<DealInputProps> = ({
             const subordPercent = (subordinateValue / pool.principalBalance) * 100;
 
             return (
-              <div key={tranche.id} className="grid grid-cols-10 gap-4 items-center bg-deep-navy/40 p-3 rounded-xl border border-white-subtle/20 hover:border-convexica-gold/30 hover:bg-deep-navy/60 transition-all group">
-                {/* Name & Type */}
-                <div className="col-span-2 space-y-1">
-                  <input type="text" value={tranche.name} onChange={(e) => updateTranche(tranche.id, 'name', e.target.value)} className="w-full bg-transparent text-sm font-bold border-none p-0 focus:ring-0 text-white leading-none placeholder:text-white/20" />
-                  <select value={tranche.type} onChange={(e) => updateTranche(tranche.id, 'type', e.target.value)} className="bg-transparent text-xs border-none p-0 text-slate-text/70 outline-none leading-none cursor-pointer">
+              <div key={tranche.id} className="grid grid-cols-12 gap-4 items-center bg-deep-navy/30 p-3.5 rounded-xl border border-white-subtle/10 hover:border-convexica-gold/20 hover:bg-deep-navy/50 transition-all group/row">
+                {/* Name */}
+                <div className="col-span-2">
+                  <input 
+                    type="text" 
+                    value={tranche.name} 
+                    onChange={(e) => updateTranche(tranche.id, 'name', e.target.value)} 
+                    className="w-full bg-transparent text-sm font-bold border-none p-0 focus:ring-0 text-white placeholder:text-white/20" 
+                  />
+                </div>
+
+                {/* Type Pill */}
+                <div className="col-span-2">
+                  <select 
+                    value={tranche.type} 
+                    onChange={(e) => updateTranche(tranche.id, 'type', e.target.value)} 
+                    className={`text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full border cursor-pointer outline-none transition-all appearance-none text-center min-w-[110px]
+                      ${tranche.type === TrancheType.SENIOR ? 'bg-inst-blue/5 text-inst-blue border-inst-blue/20 hover:bg-inst-blue/10' : 
+                        tranche.type === TrancheType.MEZZANINE ? 'bg-convexica-gold/5 text-convexica-gold border-convexica-gold/20 hover:bg-convexica-gold/10' : 
+                        'bg-risk-red/5 text-risk-red border-risk-red/20 hover:bg-risk-red/10'}`}
+                  >
                     {Object.values(TrancheType).map(t => <option key={t} value={t} className="bg-charcoal text-white">{t}</option>)}
                   </select>
                 </div>
 
                 {/* Rating */}
                 <div className="col-span-1 text-center">
-                  <input type="text" value={tranche.rating} onChange={(e) => updateTranche(tranche.id, 'rating', e.target.value)} className="w-full bg-transparent text-sm text-center border-none p-0 focus:ring-0 text-convexica-gold font-mono font-bold" />
+                  <input type="text" value={tranche.rating} onChange={(e) => updateTranche(tranche.id, 'rating', e.target.value)} className="w-full bg-transparent text-sm text-center border-none p-0 focus:ring-0 text-convexica-gold/80 font-mono font-bold" />
                 </div>
 
                 {/* % Pool */}
-                <div className="col-span-1 text-right pr-2">
-                   <span className="text-sm font-mono text-slate-text/80">{poolPercent.toFixed(1)}%</span>
+                <div className="col-span-1 text-right">
+                   <span className="text-xs font-mono text-slate-text/60">{poolPercent.toFixed(1)}%</span>
                 </div>
 
                 {/* Balance */}
                 <div className="col-span-3">
-                  <input type="text" value={formatNumber(tranche.originalBalance)} onChange={(e) => updateTranche(tranche.id, 'originalBalance', parseNumber(e.target.value))} className="w-full bg-charcoal/30 text-sm border border-white-subtle/20 rounded-lg px-2.5 py-1.5 text-right text-white font-mono outline-none focus:border-convexica-gold/40 focus:ring-1 focus:ring-convexica-gold/20" />
+                  <input type="text" value={formatNumber(tranche.originalBalance)} onChange={(e) => updateTranche(tranche.id, 'originalBalance', parseNumber(e.target.value))} className="w-full bg-charcoal/40 text-sm border border-white-subtle/10 rounded-lg px-3 py-2 text-right text-white font-mono outline-none focus:border-convexica-gold/30 focus:ring-1 focus:ring-convexica-gold/10" />
                 </div>
 
                 {/* Coupon */}
                 <div className="col-span-1">
-                  <input type="number" step="0.01" value={tranche.coupon} onChange={(e) => updateTranche(tranche.id, 'coupon', Number(e.target.value))} className="w-full bg-charcoal/30 text-sm border border-white-subtle/20 rounded-lg px-2 py-1.5 text-right text-white font-mono outline-none focus:border-convexica-gold/40" />
+                  <div className="relative">
+                    <input type="number" step="0.01" value={tranche.coupon} onChange={(e) => updateTranche(tranche.id, 'coupon', Number(e.target.value))} className="w-full bg-charcoal/40 text-sm border border-white-subtle/10 rounded-lg px-2 py-2 text-right text-white font-mono outline-none focus:border-convexica-gold/30" />
+                    <span className="absolute -right-3 top-2.5 text-[10px] text-slate-text/40">%</span>
+                  </div>
                 </div>
 
                 {/* Subordination */}
-                <div className="col-span-1 text-right pr-2">
-                   <span className="text-sm font-mono text-inst-blue font-bold">{subordPercent.toFixed(1)}%</span>
+                <div className="col-span-1 text-right">
+                   <span className="text-xs font-mono text-inst-blue/70 font-bold">{subordPercent.toFixed(1)}%</span>
                 </div>
 
                 {/* Actions */}
-                <div className="col-span-1 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => removeTranche(tranche.id)} className="p-2 text-slate-text hover:text-risk-red transition-all transform hover:scale-110">
-                    <Trash2 className="w-5 h-5" />
+                <div className="col-span-1 flex justify-end opacity-0 group-hover/row:opacity-100 transition-opacity">
+                  <button onClick={() => removeTranche(tranche.id)} className="p-2 text-slate-text/40 hover:text-risk-red transition-all transform hover:scale-110">
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>
