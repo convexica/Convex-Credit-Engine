@@ -215,11 +215,11 @@ const DealInput: React.FC<DealInputProps> = ({
         <div className="space-y-3">
            {/* Headers */}
            <div className="grid grid-cols-12 gap-4 px-4 pb-2 text-[10px] uppercase font-extrabold text-slate-text/40 tracking-[0.1em] border-b border-white-subtle/10">
-              <div className="col-span-2">Tranche Name</div>
+              <div className="col-span-3">Tranche Name</div>
               <div className="col-span-2">Class Type</div>
               <div className="col-span-1 text-center">Rating</div>
               <div className="col-span-1 text-right">Pool %</div>
-              <div className="col-span-3 text-right">Original Balance</div>
+              <div className="col-span-2 text-right">Original Balance</div>
               <div className="col-span-1 text-right">Coupon</div>
               <div className="col-span-1 text-right">Subord</div>
               <div className="col-span-1 flex justify-end"></div>
@@ -236,9 +236,9 @@ const DealInput: React.FC<DealInputProps> = ({
             const subordPercent = (subordinateValue / pool.principalBalance) * 100;
 
             return (
-              <div key={tranche.id} className="grid grid-cols-12 gap-4 items-center bg-deep-navy/30 p-3.5 rounded-xl border border-white-subtle/10 hover:border-convexica-gold/20 hover:bg-deep-navy/50 transition-all group/row">
+               <div key={tranche.id} className="grid grid-cols-12 gap-4 items-center bg-deep-navy/30 p-3.5 rounded-xl border border-white-subtle/10 hover:border-convexica-gold/20 hover:bg-deep-navy/50 transition-all group/row">
                 {/* Name */}
-                <div className="col-span-2">
+                <div className="col-span-3">
                   <input 
                     type="text" 
                     value={tranche.name} 
@@ -272,7 +272,7 @@ const DealInput: React.FC<DealInputProps> = ({
                 </div>
 
                 {/* Balance */}
-                <div className="col-span-3">
+                <div className="col-span-2">
                   <input type="text" value={formatNumber(tranche.originalBalance)} onChange={(e) => updateTranche(tranche.id, 'originalBalance', parseNumber(e.target.value))} className="w-full bg-charcoal/40 text-sm border border-white-subtle/10 rounded-lg px-3 py-2 text-right text-white font-mono outline-none focus:border-convexica-gold/30 focus:ring-1 focus:ring-convexica-gold/10" />
                 </div>
 
