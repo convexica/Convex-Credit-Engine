@@ -6,6 +6,7 @@ import MetricsTable from '@/components/MetricsTable';
 import AIAnalyst from '@/components/AIAnalyst';
 import ExecutiveSummary from '@/components/ExecutiveSummary';
 import DataReport from '@/components/DataReport';
+import SensitivityMatrix from '@/components/SensitivityMatrix';
 const YieldCurveModule = lazy(() => import('@/components/YieldCurveModule'));
 const SectorBenchmarkModule = lazy(() => import('@/components/SectorBenchmarkModule'));
 import { AssetPool, Tranche, TrancheType, Scenario, PaymentFrequency } from '@/types';
@@ -194,6 +195,7 @@ function App() {
                 <ExecutiveSummary tranches={tranches} data={cashFlows} pool={pool} scenario={scenario} />
                 <Suspense fallback={<div className="h-64 flex items-center justify-center bg-charcoal rounded-xl border border-white-subtle"><Loader2 className="animate-spin text-convexica-gold" /></div>}>
                   <Visualizer data={cashFlows} tranches={tranches} />
+                  <SensitivityMatrix pool={pool} tranches={tranches} baseScenario={scenario} />
                 </Suspense>
              </motion.div>
           )}

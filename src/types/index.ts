@@ -65,3 +65,16 @@ export interface DealMetrics {
   totalCashflow: number;
   lossCoverage: number;
 }
+
+export enum SensitivityMetric {
+  YIELD = 'Yield (%)',
+  WAL = 'WAL (Years)',
+  LOSS = 'Principal Loss (%)',
+}
+
+export interface SensitivityCell {
+  cpr: number;
+  cdr: number;
+  value: number;
+  isBaseCase: boolean;
+}
