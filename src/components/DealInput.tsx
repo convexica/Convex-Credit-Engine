@@ -214,14 +214,12 @@ const DealInput: React.FC<DealInputProps> = ({
         
         <div className="space-y-3">
            {/* Headers */}
-           <div className="grid grid-cols-12 gap-4 px-4 pb-2 text-xs uppercase font-extrabold text-slate-text/50 tracking-widest border-b border-white-subtle/10">
+           <div className="grid grid-cols-10 gap-4 px-4 pb-2 text-xs uppercase font-extrabold text-slate-text/50 tracking-widest border-b border-white-subtle/10">
               <div className="col-span-2">Name / Type</div>
               <div className="col-span-1 text-center">Rating</div>
               <div className="col-span-1 text-right">% Pool</div>
-              <div className="col-span-2 text-right">Original Balance</div>
-              <div className="col-span-1 text-right">Price</div>
+              <div className="col-span-3 text-right">Original Balance</div>
               <div className="col-span-1 text-right">Coupon</div>
-              <div className="col-span-1 text-right">Spread</div>
               <div className="col-span-1 text-right">Subord</div>
               <div className="col-span-1 flex justify-end">Actions</div>
            </div>
@@ -237,7 +235,7 @@ const DealInput: React.FC<DealInputProps> = ({
             const subordPercent = (subordinateValue / pool.principalBalance) * 100;
 
             return (
-              <div key={tranche.id} className="grid grid-cols-12 gap-4 items-center bg-deep-navy/40 p-3 rounded-xl border border-white-subtle/20 hover:border-convexica-gold/30 hover:bg-deep-navy/60 transition-all group">
+              <div key={tranche.id} className="grid grid-cols-10 gap-4 items-center bg-deep-navy/40 p-3 rounded-xl border border-white-subtle/20 hover:border-convexica-gold/30 hover:bg-deep-navy/60 transition-all group">
                 {/* Name & Type */}
                 <div className="col-span-2 space-y-1">
                   <input type="text" value={tranche.name} onChange={(e) => updateTranche(tranche.id, 'name', e.target.value)} className="w-full bg-transparent text-sm font-bold border-none p-0 focus:ring-0 text-white leading-none placeholder:text-white/20" />
@@ -257,23 +255,13 @@ const DealInput: React.FC<DealInputProps> = ({
                 </div>
 
                 {/* Balance */}
-                <div className="col-span-2">
+                <div className="col-span-3">
                   <input type="text" value={formatNumber(tranche.originalBalance)} onChange={(e) => updateTranche(tranche.id, 'originalBalance', parseNumber(e.target.value))} className="w-full bg-charcoal/30 text-sm border border-white-subtle/20 rounded-lg px-2.5 py-1.5 text-right text-white font-mono outline-none focus:border-convexica-gold/40 focus:ring-1 focus:ring-convexica-gold/20" />
-                </div>
-
-                {/* Price */}
-                <div className="col-span-1">
-                  <input type="number" step="0.01" value={tranche.price} onChange={(e) => updateTranche(tranche.id, 'price', Number(e.target.value))} className="w-full bg-charcoal/30 text-sm border border-white-subtle/20 rounded-lg px-2 py-1.5 text-right text-res-green font-mono font-bold outline-none focus:border-res-green/40" />
                 </div>
 
                 {/* Coupon */}
                 <div className="col-span-1">
                   <input type="number" step="0.01" value={tranche.coupon} onChange={(e) => updateTranche(tranche.id, 'coupon', Number(e.target.value))} className="w-full bg-charcoal/30 text-sm border border-white-subtle/20 rounded-lg px-2 py-1.5 text-right text-white font-mono outline-none focus:border-convexica-gold/40" />
-                </div>
-
-                {/* Spread */}
-                <div className="col-span-1">
-                  <input type="number" value={tranche.spread} onChange={(e) => updateTranche(tranche.id, 'spread', Number(e.target.value))} className="w-full bg-charcoal/30 text-sm border border-white-subtle/20 rounded-lg px-2 py-1.5 text-right text-slate-text font-mono outline-none focus:border-inst-blue/40" />
                 </div>
 
                 {/* Subordination */}

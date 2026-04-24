@@ -5,11 +5,12 @@ import { interpolateYield } from '@/lib/curve';
 
 interface MetricsTableProps {
   tranches: Tranche[];
+  setTranches: (t: Tranche[]) => void;
   data: CashFlowPeriod[];
   scenario: Scenario;
 }
 
-const MetricsTable: React.FC<MetricsTableProps> = ({ tranches, data, scenario }) => {
+const MetricsTable: React.FC<MetricsTableProps> = ({ tranches, setTranches, data, scenario }) => {
   const totalBalance = tranches.reduce((sum, t) => sum + t.originalBalance, 0);
 
   return (
@@ -67,7 +68,20 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ tranches, data, scenario })
                   </td>
                   <td className="px-6 py-5 text-right text-silver-text">{(t.originalBalance / 1000000).toFixed(1)}M</td>
                   <td className="px-6 py-5 text-right font-bold text-silver-text/60">{subordinationPct.toFixed(1)}%</td>
-                  <td className="px-6 py-5 text-right text-res-green/80">{t.price.toFixed(2)}</td>
+                  <td className="px-6 py-5 text-right">
+                     <div className="flex justify-end">
+                       <input 
+                         type="number" 
+                         step="0.01"
+                         value={t.price} 
+                         onChange={(e) => {
+                           const newTranches = tranches.map(tr => tr.id === t.id ? { ...tr, price: Number(e.target.value) } : tr);
+                           setTranches(newTranches);
+                         }}
+                         className="w-20 bg-deep-navy border border-white-subtle/30 rounded px-2 py-1 text-right text-res-green font-mono font-bold text-sm focus:border-res-green/60 outline-none"
+                       />
+                     </div>
+                   </td>
                   <td className="px-6 py-5 text-right text-res-green font-bold text-base decoration-res-green/20 underline underline-offset-4">{yieldIrr.toFixed(2)}%</td>
                   <td className="px-6 py-5 text-right">
                     <div className="flex flex-col items-end">

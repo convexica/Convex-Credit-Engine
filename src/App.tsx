@@ -185,7 +185,7 @@ function App() {
               <ExecutiveSummary tranches={tranches} data={cashFlows} pool={pool} scenario={scenario} />
               
               {/* Metrics Table First */}
-              <MetricsTable tranches={tranches} data={cashFlows} scenario={scenario} />
+              <MetricsTable tranches={tranches} setTranches={setTranches} data={cashFlows} scenario={scenario} />
               {/* AI Analyst Second */}
               <AIAnalyst pool={pool} tranches={tranches} scenario={scenario} />
             </motion.div>
