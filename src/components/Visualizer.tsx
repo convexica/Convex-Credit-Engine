@@ -99,15 +99,15 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
         </div>
       </div>
 
-      {/* Collateral Performance Chart */}
+      {/* 2. Pool Factor Amortization Chart */}
       <div className="bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm">
-        <h3 className="text-lg font-semibold mb-6 text-silver-text">Collateral Performance (Normalized Balance View)</h3>
-        <div className="h-[350px] w-full">
-          <ResponsiveContainer width="100%" height="100%" key={`area-container-${data.length}`}>
-            <AreaChart data={performanceData} margin={{ top: 20, right: 80, left: 40, bottom: 40 }}>
+        <h3 className="text-lg font-semibold mb-6 text-silver-text">Pool Factor Amortization (Principal Decline)</h3>
+        <div className="h-[280px] w-full">
+          <ResponsiveContainer width="100%" height="100%" key={`factor-container-${data.length}`}>
+            <AreaChart data={performanceData} margin={{ top: 10, right: 30, left: 20, bottom: 20 }}>
               <defs>
-                <linearGradient id="colorFactor" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#1f77b4" stopOpacity={0.4}/>
+                <linearGradient id="colorFactorSolo" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#1f77b4" stopOpacity={0.3}/>
                   <stop offset="95%" stopColor="#1f77b4" stopOpacity={0}/>
                 </linearGradient>
               </defs>
@@ -115,56 +115,72 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
               <XAxis 
                 dataKey="displayPeriod" 
                 stroke="#94a3b8" 
-                interval={Math.ceil(data.length / 12)} 
+                interval={Math.ceil(data.length / 10)} 
                 tick={{ fontSize: 10 }}
-                label={{ value: 'Pool Seasoning (Months)', position: 'insideBottom', offset: -10, fill: '#94a3b8', fontSize: 11 }}
               />
-              {/* Normalized Axes - Both locked to [0, 1] for relative magnitude story */}
               <YAxis 
-                yId="left"
                 stroke="#1f77b4" 
                 domain={[0, 1]}
                 tickFormatter={(v) => v.toFixed(2)}
-                width={50} 
-                tick={{ fontSize: 10, fill: '#1f77b4' }} 
-                label={{ value: 'Pool Factor (Remaining %)', angle: -90, position: 'insideLeft', fill: '#1f77b4', fontSize: 11, offset: -25 }}
-              />
-              <YAxis 
-                yId="right"
-                orientation="right"
-                stroke="#d62728" 
-                domain={[0, 1]}
-                tickFormatter={(v) => `${(v * 100).toFixed(0)}%`}
-                width={50} 
-                tick={{ fontSize: 10, fill: '#d62728' }} 
-                label={{ value: 'Cumulative Defaults (% of Orig.)', angle: 90, position: 'insideRight', fill: '#d62728', fontSize: 11, offset: 10 }}
+                width={45} 
+                tick={{ fontSize: 10 }} 
+                label={{ value: 'Factor', angle: -90, position: 'insideLeft', fill: '#1f77b4', fontSize: 10 }}
               />
               <Tooltip 
                 contentStyle={{ backgroundColor: '#1e293b', borderColor: 'rgba(255, 255, 255, 0.1)', color: '#e2e8f0' }} 
-                formatter={(v: number, name: string) => [
-                  name === 'Factor' ? v.toFixed(4) : `${(v * 100).toFixed(2)}%`,
-                  name
-                ]}
+                formatter={(v: number) => [v.toFixed(4), 'Pool Factor']}
               />
-              <Legend verticalAlign="top" align="center" height={40} iconType="circle" wrapperStyle={{ paddingBottom: '20px' }} />
               <Area 
-                yId="left"
                 type="monotone" 
                 dataKey="factor" 
                 stroke="#1f77b4" 
                 fillOpacity={1} 
-                fill="url(#colorFactor)" 
-                name="Factor" 
-                strokeWidth={3}
+                fill="url(#colorFactorSolo)" 
+                strokeWidth={2}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* 3. Cumulative Default Burn Chart */}
+      <div className="bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm">
+        <h3 className="text-lg font-semibold mb-6 text-silver-text">Cumulative Default Burn (Credit Performance)</h3>
+        <div className="h-[280px] w-full">
+          <ResponsiveContainer width="100%" height="100%" key={`default-container-${data.length}`}>
+            <AreaChart data={performanceData} margin={{ top: 10, right: 30, left: 20, bottom: 20 }}>
+              <defs>
+                <linearGradient id="colorDefaultSolo" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#d62728" stopOpacity={0.2}/>
+                  <stop offset="95%" stopColor="#d62728" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" vertical={false} />
+              <XAxis 
+                dataKey="displayPeriod" 
+                stroke="#94a3b8" 
+                interval={Math.ceil(data.length / 10)} 
+                tick={{ fontSize: 10 }}
+              />
+              <YAxis 
+                stroke="#d62728" 
+                domain={[0, 'auto']}
+                tickFormatter={(v) => `${v.toFixed(1)}%`}
+                width={45} 
+                tick={{ fontSize: 10 }} 
+                label={{ value: 'Default %', angle: -90, position: 'insideLeft', fill: '#d62728', fontSize: 10 }}
+              />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#1e293b', borderColor: 'rgba(255, 255, 255, 0.1)', color: '#e2e8f0' }} 
+                formatter={(v: number) => [`${v.toFixed(2)}%`, 'Cumulative Default']}
               />
               <Area 
-                yId="right"
                 type="monotone" 
-                dataKey={(d: any) => d.cumDefaultPct / 100} 
+                dataKey="cumDefaultPct" 
                 stroke="#d62728" 
-                fill="rgba(214, 39, 40, 0.1)" 
-                name="Cum. Default" 
-                strokeWidth={3}
+                fillOpacity={1} 
+                fill="url(#colorDefaultSolo)" 
+                strokeWidth={2}
                 strokeDasharray="5 5"
               />
             </AreaChart>
