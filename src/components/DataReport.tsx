@@ -121,47 +121,49 @@ const DataReport: React.FC<DataReportProps> = ({ cashFlows, tranches, onDownload
                   return (
                     <React.Fragment key={t.id}>
                       <td className="p-2 border-l border-white-subtle/10 text-slate-text/60">
-                        {flow?.interest > 0 ? Math.round(flow.interest).toLocaleString() : '-'}
-                      </td>
-                      <td className="p-2 text-silver-text font-medium">
-                        {flow?.principal > 0 ? Math.round(flow.principal).toLocaleString() : '-'}
-                      </td>
-                      <td className="p-2 text-risk-red/80 font-bold">
-                        {flow?.loss > 0 ? Math.round(flow.loss).toLocaleString() : '-'}
-                      </td>
-                      <td className="p-2 text-silver-text font-bold bg-white-subtle/5">
-                        {row.period === 0 ? t.originalBalance.toLocaleString() : (flow?.balanceEnd || 0).toLocaleString()}
-                      </td>
-                    </React.Fragment>
-                  )
-                })}
-                <td className="p-2 text-convexica-gold/80 font-bold">
-                  {row.excessSpread > 0 ? row.excessSpread.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '-'}
+                  {flow?.interest > 0 ? Math.round(flow.interest).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '-'}
                 </td>
-              </tr>
-            ))}
-          </tbody>
-          <tfoot className="bg-deep-navy/90 font-bold text-silver-text border-t-2 border-convexica-gold/30 sticky bottom-0 z-30">
-            <tr>
-              <td className="p-2 text-left uppercase sticky left-0 z-40 bg-deep-navy">Totals</td>
-              <td className="p-2">-</td>
-              <td className="p-2 text-inst-blue">{Math.round(totals.poolInterest).toLocaleString()}</td>
-              <td className="p-2 text-inst-blue/50 italic">{Math.round(totals.poolServicingFee).toLocaleString()}</td>
-              <td className="p-2 text-strat-orange">{Math.round(totals.poolPrincipal).toLocaleString()}</td>
-              <td className="p-2 text-risk-red">{Math.round(totals.poolDefaults).toLocaleString()}</td>
-              <td className="p-2 text-risk-red">{Math.round(totals.poolLoss).toLocaleString()}</td>
-              <td className="p-2 text-green-400">{Math.round(totals.poolRecovery).toLocaleString()}</td>
-              {tranches.map(t => (
-                <React.Fragment key={t.id}>
-                  <td className="p-2 border-l border-white-subtle/20 text-slate-text">{Math.round(totals.tranches[t.id]?.interest || 0).toLocaleString()}</td>
-                  <td className="p-2 text-silver-text">{Math.round(totals.tranches[t.id]?.principal || 0).toLocaleString()}</td>
-                  <td className="p-2 text-risk-red">{Math.round(totals.tranches[t.id]?.loss || 0).toLocaleString()}</td>
-                  <td className="p-2 text-silver-text">-</td>
-                </React.Fragment>
-              ))}
-              <td className="p-2 text-convexica-gold">{Math.round(totals.excessSpread).toLocaleString()}</td>
-            </tr>
-          </tfoot>
+                <td className="p-2 text-silver-text font-medium">
+                  {flow?.principal > 0 ? Math.round(flow.principal).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '-'}
+                </td>
+                <td className="p-2 text-risk-red/80 font-bold">
+                  {flow?.loss > 0 ? Math.round(flow.loss).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '-'}
+                </td>
+                <td className="p-2 text-silver-text font-bold bg-white-subtle/5">
+                  {row.period === 0 
+                    ? t.originalBalance.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) 
+                    : Math.round(flow?.balanceEnd || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                </td>
+              </React.Fragment>
+            )
+          })}
+          <td className="p-2 text-convexica-gold/80 font-bold">
+            {row.excessSpread > 0 ? Math.round(row.excessSpread).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '-'}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+    <tfoot className="bg-deep-navy/90 font-bold text-silver-text border-t-2 border-convexica-gold/30 sticky bottom-0 z-30">
+      <tr>
+        <td className="p-2 text-left uppercase sticky left-0 z-40 bg-deep-navy">Totals</td>
+        <td className="p-2">-</td>
+        <td className="p-2 text-inst-blue">{Math.round(totals.poolInterest).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+        <td className="p-2 text-inst-blue/50 italic">{Math.round(totals.poolServicingFee).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+        <td className="p-2 text-strat-orange">{Math.round(totals.poolPrincipal).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+        <td className="p-2 text-risk-red">{Math.round(totals.poolDefaults).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+        <td className="p-2 text-risk-red">{Math.round(totals.poolLoss).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+        <td className="p-2 text-green-400">{Math.round(totals.poolRecovery).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+        {tranches.map(t => (
+          <React.Fragment key={t.id}>
+            <td className="p-2 border-l border-white-subtle/20 text-slate-text">{Math.round(totals.tranches[t.id]?.interest || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+            <td className="p-2 text-silver-text">{Math.round(totals.tranches[t.id]?.principal || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+            <td className="p-2 text-risk-red">{Math.round(totals.tranches[t.id]?.loss || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+            <td className="p-2 text-silver-text">-</td>
+          </React.Fragment>
+        ))}
+        <td className="p-2 text-convexica-gold">{Math.round(totals.excessSpread).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+      </tr>
+    </tfoot>
         </table>
       </div>
     </div>
