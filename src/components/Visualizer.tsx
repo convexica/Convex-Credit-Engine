@@ -81,6 +81,15 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
     };
   });
 
+  // 4. Pre-calculate Excess Spread vs Losses
+  const spreadData = data
+    .filter(d => d.period > 0)
+    .map(d => ({
+       period: `M${d.period}`,
+       excessSpread: d.excessSpread,
+       netLoss: -d.poolLoss // Negative to hang below the X-axis waterline
+    }));
+
   return (
     <div className={`space-y-6 transition-opacity duration-300 ${isUpdating ? 'opacity-50' : 'opacity-100'}`}>
       {/* Principal Waterfall Chart */}
@@ -258,6 +267,53 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
               <Line type="monotone" dataKey="seniorCE" stroke={colorMap[TrancheType.SENIOR]} strokeWidth={2} dot={false} />
               <Line type="monotone" dataKey="mezzCE" stroke={colorMap[TrancheType.MEZZANINE]} strokeWidth={2} dot={false} />
             </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* 5. Excess Spread vs. Net Loss Chart */}
+      <div className="bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm">
+        <h3 className="text-lg font-semibold mb-6 text-silver-text">Excess Spread vs. Net Losses (First Line of Defense)</h3>
+        <div className="h-[280px] w-full">
+          <ResponsiveContainer width="100%" height="100%" key={`spread-container-${data.length}`}>
+            <BarChart data={spreadData} margin={{ top: 10, right: 30, left: 20, bottom: 20 }} stackOffset="sign">
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" vertical={false} />
+              <XAxis 
+                dataKey="period" 
+                stroke="#94a3b8" 
+                interval={Math.ceil(data.length / 10)} 
+                tick={{ fontSize: 10 }}
+              />
+              <YAxis 
+                stroke="#94a3b8" 
+                tickFormatter={(v) => Math.abs(v).toLocaleString(undefined, { notation: "compact", compactDisplay: "short" })}
+                width={45} 
+                tick={{ fontSize: 10 }} 
+              />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#1e293b', borderColor: 'rgba(255, 255, 255, 0.1)', color: '#e2e8f0' }} 
+                formatter={(v: number, name: string) => [Math.abs(v).toLocaleString(undefined, { maximumFractionDigits: 0 }), name === 'excessSpread' ? 'Excess Spread' : 'Net Loss']}
+              />
+              <Legend
+                verticalAlign="bottom"
+                align="center"
+                wrapperStyle={{ paddingTop: '20px' }}
+                content={() => (
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', paddingTop: '16px' }}>
+                     <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#94a3b8' }}>
+                       <span style={{ display: 'inline-block', width: '12px', height: '12px', backgroundColor: '#eab308', borderRadius: '2px' }} />
+                       Excess Spread (Defense)
+                     </span>
+                     <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#94a3b8' }}>
+                       <span style={{ display: 'inline-block', width: '12px', height: '12px', backgroundColor: '#d62728', borderRadius: '2px' }} />
+                       Net Loss (Attack)
+                     </span>
+                  </div>
+                )}
+              />
+              <Bar dataKey="excessSpread" fill="#eab308" stackId="stack" />
+              <Bar dataKey="netLoss" fill="#d62728" stackId="stack" />
+            </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
