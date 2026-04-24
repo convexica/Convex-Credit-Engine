@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tranche, CashFlowPeriod, Scenario } from '@/types';
-import { calculateWAL, calculateIRR, calculateModifiedDuration, calculatePriceFromYield } from '@/lib/waterfall';
+import { calculateWAL, calculateIRR, calculateModifiedDuration, calculatePriceFromYield, calculatePrincipalWindow } from '@/lib/waterfall';
 import { interpolateYield } from '@/lib/curve';
 
 interface MetricsTableProps {
@@ -34,12 +34,14 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ tranches, setTranches, data
               <th className="px-6 py-4 text-right">Yield (IRR)</th>
               <th className="px-6 py-4 text-right text-convexica-gold/70">Spread</th>
               <th className="px-6 py-4 text-right">WAL (Yrs)</th>
+              <th className="px-6 py-4 text-right">Prin Window</th>
               <th className="px-6 py-4 text-right text-risk-red/80">Losses</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white-subtle/5">
             {tranches.map((t, index) => {
               const wal = calculateWAL(data, t.id);
+              const window = calculatePrincipalWindow(data, t.id);
               const totalLoss = data.reduce((sum, p) => sum + (p.trancheCashflows[t.id]?.loss || 0), 0);
 
               // Subordination Calculation: Sum of all tranches AFTER this one in the array
@@ -121,6 +123,16 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ tranches, setTranches, data
                     </div>
                   </td>
                   <td className="px-6 py-5 text-right text-white">{wal.toFixed(2)}</td>
+                  <td className="px-6 py-5 text-right">
+                    {window ? (
+                      <div className="flex flex-col items-end">
+                        <span className="text-xs font-mono text-inst-blue font-bold">M{window.start} – M{window.end}</span>
+                        <span className="text-[9px] text-slate-text/40 uppercase font-bold tracking-tighter">({window.end - window.start + 1} mos)</span>
+                      </div>
+                    ) : (
+                      <span className="text-slate-text/30">—</span>
+                    )}
+                  </td>
                   <td className="px-6 py-5 text-right text-risk-red font-bold">{Math.round(totalLoss).toLocaleString()}</td>
                 </tr>
               );

@@ -316,3 +316,26 @@ export const calculatePriceFromYield = (
 
     return (pv / originalBalance) * 100;
 };
+
+/**
+ * Identifies the principal payment window (Start Month to End Month) for a tranche.
+ * Useful for understanding the duration and sequencing of the capital stack.
+ */
+export const calculatePrincipalWindow = (
+    flows: CashFlowPeriod[],
+    trancheId: string
+): { start: number; end: number } | null => {
+    let start = -1;
+    let end = -1;
+
+    flows.forEach((p) => {
+        const flow = p.trancheCashflows[trancheId];
+        if (flow && Math.round(flow.principal) > 0) {
+            if (start === -1) start = p.period;
+            end = p.period;
+        }
+    });
+
+    if (start === -1) return null;
+    return { start, end };
+};
