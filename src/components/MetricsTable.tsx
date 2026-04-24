@@ -68,7 +68,7 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ tranches, setTranches, data
                   </td>
                   <td className="px-6 py-5 text-right text-silver-text">{(t.originalBalance / 1000000).toFixed(1)}M</td>
                   <td className="px-6 py-5 text-right font-bold text-silver-text/60">{subordinationPct.toFixed(1)}%</td>
-                  <td className="px-6 py-5 text-right">
+                   <td className="px-6 py-5 text-right">
                      <div className="flex justify-end">
                        <input 
                          type="number" 
@@ -78,7 +78,7 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ tranches, setTranches, data
                            const newTranches = tranches.map(tr => tr.id === t.id ? { ...tr, price: Number(e.target.value) } : tr);
                            setTranches(newTranches);
                          }}
-                         className="w-20 bg-deep-navy border border-white-subtle/30 rounded px-2 py-1 text-right text-res-green font-mono font-bold text-sm focus:border-res-green/60 outline-none"
+                         className="w-20 bg-deep-navy border border-white-subtle/30 rounded px-2 py-1 text-right text-res-green font-mono font-bold text-sm focus:border-res-green/60 outline-none hover:border-res-green/40 transition-colors"
                        />
                      </div>
                    </td>
@@ -96,12 +96,13 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ tranches, setTranches, data
                            }}
                            className="w-20 bg-deep-navy border border-white-subtle/30 rounded px-2 py-1 text-right text-res-green font-bold text-sm focus:border-res-green/60 outline-none hover:border-res-green/40 transition-colors"
                          />
-                         <div className="absolute -top-1 -right-1 w-2 h-2 bg-res-green rounded-full opacity-0 group-hover/yield:opacity-50"></div>
+                         <span className="absolute -right-4 top-1.5 text-[10px] text-res-green/50 font-bold">%</span>
                        </div>
                      </div>
                    </td>
                    <td className="px-6 py-5 text-right">
-                    <div className="flex flex-col items-end group/spread">
+                    <div className="flex justify-end items-center gap-2 group/spread">
+                      <span className="text-[9px] text-inst-blue/40 uppercase font-bold tracking-tighter">@{benchmarkRate.toFixed(1)}</span>
                       <div className="relative">
                         <input 
                           type="number" 
@@ -117,7 +118,6 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ tranches, setTranches, data
                         />
                         <span className="absolute -right-5 top-1.5 text-[10px] text-convexica-gold/50 font-bold">bps</span>
                       </div>
-                      <span className="text-[9px] text-inst-blue/70 uppercase font-bold tracking-tighter mr-6">vs {benchmarkRate.toFixed(2)}% Bench</span>
                     </div>
                   </td>
                   <td className="px-6 py-5 text-right text-white">{wal.toFixed(2)}</td>
