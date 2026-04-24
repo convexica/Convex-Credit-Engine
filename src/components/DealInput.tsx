@@ -170,24 +170,32 @@ const DealInput: React.FC<DealInputProps> = ({
               <input type="range" min="0" max="25" step="0.5" value={scenario.turboTriggerPct || 0} onChange={(e) => setScenario({ ...scenario, turboTriggerPct: Number(e.target.value) })} className="w-full h-2 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-convexica-gold" />
             </div>
 
-            {/* Benchmark Rate (New) */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center mb-1">
-                <label className="text-sm font-bold text-slate-text tracking-wide flex items-center gap-1">
-                  Benchmark <span className="text-[10px] text-inst-blue font-normal">(Rate %)</span>
-                </label>
-                <div className="relative">
-                  <input 
-                    type="number" 
-                    step="0.05" 
-                    value={scenario.benchmarkRate || 0} 
-                    onChange={(e) => setScenario({ ...scenario, benchmarkRate: Number(e.target.value) })} 
-                    className="w-24 bg-inst-blue/5 border border-inst-blue/20 text-sm font-mono font-bold text-inst-blue rounded-lg text-right pr-6 py-1 outline-none focus:border-inst-blue/50" 
-                  />
-                  <span className="absolute right-2 top-1.5 text-xs text-inst-blue/50">%</span>
-                </div>
+            {/* Yield Curve Input (Full Width) */}
+            <div className="md:col-span-3 space-y-3 pt-4 border-t border-white-subtle/10">
+              <label className="text-sm font-bold text-slate-text tracking-wide flex items-center gap-1">
+                Reference Yield Curve <span className="text-[10px] text-inst-blue font-normal">(Point-on-Curve Matching)</span>
+              </label>
+              <div className="flex flex-wrap gap-4">
+                {(scenario.yieldCurve || []).map((pt, idx) => (
+                  <div key={idx} className="flex flex-col gap-1 bg-deep-navy/40 p-2 rounded-lg border border-white-subtle/10">
+                    <span className="text-[10px] uppercase font-bold text-slate-text text-center">{pt.tenor} Yr</span>
+                    <div className="relative">
+                      <input 
+                        type="number" 
+                        step="0.05" 
+                        value={pt.rate} 
+                        onChange={(e) => {
+                          const newCurve = [...scenario.yieldCurve];
+                          newCurve[idx].rate = Number(e.target.value);
+                          setScenario({ ...scenario, yieldCurve: newCurve });
+                        }}
+                        className="w-20 bg-inst-blue/5 border border-inst-blue/20 text-sm font-mono font-bold text-inst-blue rounded-md text-right pr-5 py-1 outline-none focus:border-inst-blue/50" 
+                      />
+                      <span className="absolute right-1.5 top-1.5 text-[10px] text-inst-blue/50">%</span>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <input type="range" min="0" max="15" step="0.05" value={scenario.benchmarkRate || 0} onChange={(e) => setScenario({ ...scenario, benchmarkRate: Number(e.target.value) })} className="w-full h-2 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-inst-blue" />
             </div>
           </div>
         </div>

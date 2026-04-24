@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tranche, CashFlowPeriod, Scenario } from '@/types';
 import { calculateWAL, calculateIRR, calculateModifiedDuration } from '@/lib/waterfall';
+import { interpolateYield } from '@/lib/curve';
 
 interface MetricsTableProps {
   tranches: Tranche[];
@@ -10,13 +11,15 @@ interface MetricsTableProps {
 
 const MetricsTable: React.FC<MetricsTableProps> = ({ tranches, data, scenario }) => {
   const totalBalance = tranches.reduce((sum, t) => sum + t.originalBalance, 0);
-  const benchmarkRate = scenario.benchmarkRate; // Use dynamic benchmark from scenario
 
   return (
     <div className="bg-charcoal rounded-xl border border-white-subtle shadow-sm overflow-hidden">
       <div className="px-6 py-5 border-b border-white-subtle flex justify-between items-center">
         <h2 className="text-sm font-bold uppercase tracking-widest text-convexica-gold">Tranche Performance Analytics</h2>
-        <span className="text-[10px] text-slate-text/60 uppercase font-bold tracking-tighter">Benchmark: {benchmarkRate.toFixed(2)}%</span>
+        <span className="text-[10px] text-slate-text/60 uppercase font-bold tracking-tighter flex items-center gap-1.5">
+          <div className="w-1.5 h-1.5 rounded-full bg-inst-blue animate-pulse"></div>
+          Point-on-Curve Matching Active
+        </span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-slate-text">
@@ -49,6 +52,9 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ tranches, data, scenario })
               });
               const initialInvestment = t.originalBalance * (t.price / 100);
               const yieldIrr = calculateIRR(initialInvestment, monthlyFlows);
+              
+              // Dynamic Benchmark matching based on Tranche WAL
+              const benchmarkRate = interpolateYield(scenario.yieldCurve, wal);
               const spread = yieldIrr - benchmarkRate;
 
               return (
@@ -63,7 +69,12 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ tranches, data, scenario })
                   <td className="px-6 py-5 text-right font-bold text-silver-text/60">{subordinationPct.toFixed(1)}%</td>
                   <td className="px-6 py-5 text-right text-res-green/80">{t.price.toFixed(2)}</td>
                   <td className="px-6 py-5 text-right text-res-green font-bold text-base decoration-res-green/20 underline underline-offset-4">{yieldIrr.toFixed(2)}%</td>
-                  <td className="px-6 py-5 text-right text-convexica-gold font-bold">{spread > 0 ? '+' : ''}{(spread * 100).toFixed(0)} bps</td>
+                  <td className="px-6 py-5 text-right">
+                    <div className="flex flex-col items-end">
+                      <span className="text-convexica-gold font-bold">{spread > 0 ? '+' : ''}{(spread * 100).toFixed(0)} bps</span>
+                      <span className="text-[9px] text-inst-blue/70 uppercase font-bold tracking-tighter">vs {benchmarkRate.toFixed(2)}% Bench</span>
+                    </div>
+                  </td>
                   <td className="px-6 py-5 text-right text-white">{wal.toFixed(2)}</td>
                   <td className="px-6 py-5 text-right text-risk-red font-bold">{Math.round(totalLoss).toLocaleString()}</td>
                 </tr>

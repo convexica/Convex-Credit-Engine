@@ -35,7 +35,14 @@ const DEFAULT_SCENARIO: Scenario = {
   servicingFee: 0.5,
   recoveryLag: 6,
   turboTriggerPct: 5.0, // Default institutional trigger
-  benchmarkRate: 7.50,
+  yieldCurve: [
+    { tenor: 0.5, rate: 6.50 },
+    { tenor: 1.0, rate: 6.75 },
+    { tenor: 2.0, rate: 7.00 },
+    { tenor: 3.0, rate: 7.25 },
+    { tenor: 5.0, rate: 7.50 },
+    { tenor: 10.0, rate: 7.80 },
+  ],
 };
 
 function App() {

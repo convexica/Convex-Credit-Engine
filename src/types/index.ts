@@ -29,6 +29,11 @@ export interface Tranche {
   price: number; // Price as % of par (e.g., 100 for par)
 }
 
+export interface YieldCurvePoint {
+  tenor: number; // Years
+  rate: number; // %
+}
+
 export interface Scenario {
   cpr: number; // Constant Prepayment Rate (%)
   cdr: number; // Constant Default Rate (%)
@@ -37,7 +42,7 @@ export interface Scenario {
   servicingFee: number; // Annual Servicing Fee (%)
   recoveryLag: number; // Months to Recovery
   turboTriggerPct?: number; // Cumulative Default % that triggers Senior Principal Redirection
-  benchmarkRate: number; // Base Risk-Free or Swap Rate (%)
+  yieldCurve: YieldCurvePoint[]; // Point-on-curve interpolation
 }
 
 export interface CashFlowPeriod {
