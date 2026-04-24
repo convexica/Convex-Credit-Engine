@@ -51,11 +51,11 @@ const DealInput: React.FC<DealInputProps> = ({
   return (
     <div className="space-y-4 text-silver-text max-w-[1600px] mx-auto">
       
-      {/* Top Section: Split view for Asset Pool and Scenario */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      {/* Top Section: Pool, Scenario, and Market Data */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
         
-        {/* Asset Pool - Compact (4/12) */}
-        <div className="lg:col-span-4 bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm flex flex-col justify-between">
+        {/* Asset Pool - Card (3/12) */}
+        <div className="lg:col-span-3 bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-sm font-bold uppercase tracking-widest text-convexica-gold flex items-center gap-2">
               <PieChart className="w-5 h-5" /> Asset Pool
@@ -84,12 +84,12 @@ const DealInput: React.FC<DealInputProps> = ({
           </div>
         </div>
 
-        {/* Scenario Assumptions - Grid (8/12) */}
-        <div className="lg:col-span-8 bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm">
+        {/* Scenario Assumptions - Grid (6/12) */}
+        <div className="lg:col-span-6 bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm">
           <h2 className="text-sm font-bold uppercase tracking-widest text-inst-blue mb-6 flex items-center gap-2">
-            Scenario Assumptions
+            <TrendingUp className="w-5 h-5" /> Scenario Assumptions
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
             {/* CPR */}
             <div className="space-y-3">
               <div className="flex justify-between items-center mb-1">
@@ -170,31 +170,43 @@ const DealInput: React.FC<DealInputProps> = ({
               <input type="range" min="0" max="25" step="0.5" value={scenario.turboTriggerPct || 0} onChange={(e) => setScenario({ ...scenario, turboTriggerPct: Number(e.target.value) })} className="w-full h-2 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-convexica-gold" />
             </div>
 
-            {/* Yield Curve Input (Full Width) */}
-            <div className="md:col-span-3 space-y-3 pt-4 border-t border-white-subtle/10">
-              <label className="text-sm font-bold text-slate-text tracking-wide flex items-center gap-1">
-                Reference Yield Curve <span className="text-[10px] text-inst-blue font-normal">(Point-on-Curve Matching)</span>
-              </label>
-              <div className="flex flex-wrap gap-4">
-                {(scenario.yieldCurve || []).map((pt, idx) => (
-                  <div key={idx} className="flex flex-col gap-1 bg-deep-navy/40 p-2 rounded-lg border border-white-subtle/10">
-                    <span className="text-[10px] uppercase font-bold text-slate-text text-center">{pt.tenor} Yr</span>
-                    <div className="relative">
-                      <input 
-                        type="number" 
-                        step="0.05" 
-                        value={pt.rate} 
-                        onChange={(e) => {
-                          const newCurve = [...scenario.yieldCurve];
-                          newCurve[idx].rate = Number(e.target.value);
-                          setScenario({ ...scenario, yieldCurve: newCurve });
-                        }}
-                        className="w-20 bg-inst-blue/5 border border-inst-blue/20 text-sm font-mono font-bold text-inst-blue rounded-md text-right pr-5 py-1 outline-none focus:border-inst-blue/50" 
-                      />
-                      <span className="absolute right-1.5 top-1.5 text-[10px] text-inst-blue/50">%</span>
-                    </div>
+          </div>
+        </div>
+
+        {/* Market Data - Card (3/12) */}
+        <div className="lg:col-span-3 bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-convexica-gold mb-6 flex items-center gap-2">
+            <Activity className="w-5 h-5" /> Market Data
+          </h2>
+          <div className="space-y-4">
+            <div className="p-3 bg-deep-navy/30 rounded-lg border border-white-subtle/10 mb-4">
+              <span className="text-[10px] uppercase font-bold text-slate-text/50 tracking-widest">Reference Yield Curve</span>
+            </div>
+            <div className="space-y-3">
+              {(scenario.yieldCurve || []).map((pt, idx) => (
+                <div key={idx} className="flex items-center justify-between group/curve">
+                  <span className="text-[11px] uppercase font-extrabold text-slate-text/60">{pt.tenor} Year</span>
+                  <div className="relative">
+                    <input 
+                      type="number" 
+                      step="0.05" 
+                      value={pt.rate} 
+                      onChange={(e) => {
+                        const newCurve = [...scenario.yieldCurve];
+                        newCurve[idx].rate = Number(e.target.value);
+                        setScenario({ ...scenario, yieldCurve: newCurve });
+                      }}
+                      className="w-20 bg-inst-blue/5 border border-inst-blue/20 text-xs font-mono font-bold text-inst-blue rounded px-2 py-1.5 text-right pr-6 outline-none focus:border-inst-blue/50 transition-all" 
+                    />
+                    <span className="absolute right-2 top-1.5 text-[10px] text-inst-blue/40">%</span>
                   </div>
-                ))}
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 pt-4 border-t border-white-subtle/5">
+              <div className="flex items-center gap-2 text-res-green/60">
+                <ShieldCheck className="w-4 h-4" />
+                <span className="text-[9px] uppercase font-bold tracking-tighter">Linear Interpolation Active</span>
               </div>
             </div>
           </div>
