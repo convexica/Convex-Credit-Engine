@@ -285,3 +285,34 @@ export const calculateModifiedDuration = (
     const macaulayDuration = weightedPVTime / totalPV;
     return macaulayDuration / (1 + monthlyYield);
 };
+
+/**
+ * Calculates the Price of a tranche given a target Yield (IRR).
+ * Performs a Present Value (PV) calculation of all future cash flows.
+ * @param annualYield - The target annual yield (%)
+ * @param monthlyFlows - Array of total cash flows (Prin + Int) per month
+ * @param originalBalance - Original principal balance to calculate price as % of par
+ */
+export const calculatePriceFromYield = (
+    annualYield: number,
+    monthlyFlows: number[],
+    originalBalance: number
+): number => {
+    if (originalBalance === 0 || monthlyFlows.length === 0) return 0;
+    
+    // Handle edge case where yield is 0 (Price is simply sum of undiscounted flows)
+    if (annualYield <= 0) {
+        const sum = monthlyFlows.reduce((a, b) => a + b, 0);
+        return (sum / originalBalance) * 100;
+    }
+
+    const monthlyYield = annualYield / 100 / 12;
+    let pv = 0;
+    
+    monthlyFlows.forEach((flow, i) => {
+        // Index i represents month M(i+1)
+        pv += flow / Math.pow(1 + monthlyYield, i + 1);
+    });
+
+    return (pv / originalBalance) * 100;
+};

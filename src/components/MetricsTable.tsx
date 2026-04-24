@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tranche, CashFlowPeriod, Scenario } from '@/types';
-import { calculateWAL, calculateIRR, calculateModifiedDuration } from '@/lib/waterfall';
+import { calculateWAL, calculateIRR, calculateModifiedDuration, calculatePriceFromYield } from '@/lib/waterfall';
 import { interpolateYield } from '@/lib/curve';
 
 interface MetricsTableProps {
@@ -82,11 +82,42 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ tranches, setTranches, data
                        />
                      </div>
                    </td>
-                  <td className="px-6 py-5 text-right text-res-green font-bold text-base decoration-res-green/20 underline underline-offset-4">{yieldIrr.toFixed(2)}%</td>
-                  <td className="px-6 py-5 text-right">
-                    <div className="flex flex-col items-end">
-                      <span className="text-convexica-gold font-bold">{spread > 0 ? '+' : ''}{(spread * 100).toFixed(0)} bps</span>
-                      <span className="text-[9px] text-inst-blue/70 uppercase font-bold tracking-tighter">vs {benchmarkRate.toFixed(2)}% Bench</span>
+                   <td className="px-6 py-5 text-right">
+                     <div className="flex justify-end">
+                       <div className="relative group/yield">
+                         <input 
+                           type="number" 
+                           step="0.05"
+                           value={yieldIrr.toFixed(2)} 
+                           onChange={(e) => {
+                             const newYield = Number(e.target.value);
+                             const newPrice = calculatePriceFromYield(newYield, monthlyFlows, t.originalBalance);
+                             setTranches(tranches.map(tr => tr.id === t.id ? { ...tr, price: newPrice } : tr));
+                           }}
+                           className="w-20 bg-deep-navy border border-white-subtle/30 rounded px-2 py-1 text-right text-res-green font-bold text-sm focus:border-res-green/60 outline-none hover:border-res-green/40 transition-colors"
+                         />
+                         <div className="absolute -top-1 -right-1 w-2 h-2 bg-res-green rounded-full opacity-0 group-hover/yield:opacity-50"></div>
+                       </div>
+                     </div>
+                   </td>
+                   <td className="px-6 py-5 text-right">
+                    <div className="flex flex-col items-end group/spread">
+                      <div className="relative">
+                        <input 
+                          type="number" 
+                          step="1"
+                          value={(spread * 100).toFixed(0)} 
+                          onChange={(e) => {
+                            const newSpreadBps = Number(e.target.value);
+                            const targetYield = benchmarkRate + (newSpreadBps / 100);
+                            const newPrice = calculatePriceFromYield(targetYield, monthlyFlows, t.originalBalance);
+                            setTranches(tranches.map(tr => tr.id === t.id ? { ...tr, price: newPrice } : tr));
+                          }}
+                          className="w-20 bg-deep-navy border border-white-subtle/30 rounded px-2 py-1 text-right text-convexica-gold font-bold text-sm focus:border-convexica-gold/60 outline-none hover:border-convexica-gold/40 transition-colors"
+                        />
+                        <span className="absolute -right-5 top-1.5 text-[10px] text-convexica-gold/50 font-bold">bps</span>
+                      </div>
+                      <span className="text-[9px] text-inst-blue/70 uppercase font-bold tracking-tighter mr-6">vs {benchmarkRate.toFixed(2)}% Bench</span>
                     </div>
                   </td>
                   <td className="px-6 py-5 text-right text-white">{wal.toFixed(2)}</td>
