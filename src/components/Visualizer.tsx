@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend, LineChart, Line } from 'recharts';
 import { CashFlowPeriod, Tranche, TrancheType } from '@/types';
 
 interface VisualizerProps {
@@ -52,6 +52,32 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
       displayPeriod: d.period === 0 ? 'M0' : `M${d.period}`,
       factor: d.poolBalanceEnd / data[0].poolBalanceStart,
       cumDefaultPct: (runningDefaultTotal / data[0].poolBalanceStart) * 100
+    };
+  });
+
+  // 3. Pre-calculate Credit Enhancement Evolution - START FROM M0
+  const ceData = data.map((d) => {
+    let seniorBal = 0;
+    let mezzBal = 0;
+    let equityBal = 0;
+    let totalBal = 0;
+
+    tranches.forEach(t => {
+      const bal = d.trancheCashflows[t.id]?.balanceEnd || 0;
+      totalBal += bal;
+      if (t.type === TrancheType.SENIOR) seniorBal += bal;
+      if (t.type === TrancheType.MEZZANINE) mezzBal += bal;
+      if (t.type === TrancheType.EQUITY) equityBal += bal;
+    });
+
+    // CE = Total Subordinated Balance / Total Pool Balance
+    const seniorCE = totalBal > 0 ? ((mezzBal + equityBal) / totalBal) * 100 : 0;
+    const mezzCE = totalBal > 0 ? (equityBal / totalBal) * 100 : 0;
+
+    return {
+      period: d.period === 0 ? 'M0' : `M${d.period}`,
+      seniorCE,
+      mezzCE,
     };
   });
 
@@ -184,6 +210,54 @@ const Visualizer: React.FC<VisualizerProps> = ({ data, tranches }) => {
                 strokeDasharray="5 5"
               />
             </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      {/* 4. Credit Enhancement (CE) Evolution Chart */}
+      <div className="bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm">
+        <h3 className="text-lg font-semibold mb-6 text-silver-text">Credit Enhancement Evolution (Loss Coverage)</h3>
+        <div className="h-[280px] w-full">
+          <ResponsiveContainer width="100%" height="100%" key={`ce-container-${data.length}`}>
+            <LineChart data={ceData} margin={{ top: 10, right: 30, left: 20, bottom: 20 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" vertical={false} />
+              <XAxis 
+                dataKey="period" 
+                stroke="#94a3b8" 
+                interval={Math.ceil(data.length / 10)} 
+                tick={{ fontSize: 10 }}
+              />
+              <YAxis 
+                stroke="#94a3b8" 
+                domain={[0, 100]}
+                tickFormatter={(v) => `${v}%`}
+                width={45} 
+                tick={{ fontSize: 10 }} 
+                label={{ value: 'CE %', angle: -90, position: 'insideLeft', fill: '#94a3b8', fontSize: 10 }}
+              />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#1e293b', borderColor: 'rgba(255, 255, 255, 0.1)', color: '#e2e8f0' }} 
+                formatter={(v: number, name: string) => [`${v.toFixed(2)}%`, name === 'seniorCE' ? 'Senior CE' : 'Mezzanine CE']}
+              />
+              <Legend
+                verticalAlign="bottom"
+                align="center"
+                wrapperStyle={{ paddingTop: '20px' }}
+                content={() => (
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', paddingTop: '16px' }}>
+                     <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#94a3b8' }}>
+                       <span style={{ display: 'inline-block', width: '12px', height: '12px', backgroundColor: colorMap[TrancheType.SENIOR], borderRadius: '2px' }} />
+                       Senior CE
+                     </span>
+                     <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#94a3b8' }}>
+                       <span style={{ display: 'inline-block', width: '12px', height: '12px', backgroundColor: colorMap[TrancheType.MEZZANINE], borderRadius: '2px' }} />
+                       Mezzanine CE
+                     </span>
+                  </div>
+                )}
+              />
+              <Line type="monotone" dataKey="seniorCE" stroke={colorMap[TrancheType.SENIOR]} strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="mezzCE" stroke={colorMap[TrancheType.MEZZANINE]} strokeWidth={2} dot={false} />
+            </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
