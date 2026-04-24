@@ -61,87 +61,66 @@ const DealInput: React.FC<DealInputProps> = ({
   return (
     <div className="space-y-4 text-silver-text max-w-[1600px] mx-auto">
       
-      {/* Top Section: Sidebar (Pool & Market) and Main Workspace (Scenario) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8 items-stretch">
+      {/* Top Section: Pool, Scenario, and Market Data */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
         
-        {/* Left Sidebar: Asset Pool & Market Data */}
-        <div className="lg:col-span-4 space-y-8 flex flex-col">
-          {/* Asset Pool */}
-          <div className="bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm flex-1">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-sm font-bold uppercase tracking-widest text-convexica-gold flex items-center gap-2">
-                <PieChart className="w-5 h-5" /> Asset Pool
-              </h2>
-            </div>
-            <div className="space-y-6">
-              <div>
-                <label className="block text-xs uppercase font-bold text-slate-text/70 mb-2 tracking-widest">Principal Balance</label>
-                <input
-                  type="text"
-                  value={formatNumber(pool.principalBalance)}
-                  onChange={(e) => setPool({ ...pool, principalBalance: parseNumber(e.target.value) })}
-                  className="w-full bg-deep-navy border border-white-subtle/50 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-convexica-gold/50 outline-none font-mono text-xl font-bold"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-xs uppercase font-bold text-slate-text/70 mb-2 tracking-widest">WAC (%)</label>
-                  <input type="number" step="0.01" value={pool.wac} onChange={(e) => setPool({ ...pool, wac: Number(e.target.value) })} className="w-full bg-deep-navy border border-white-subtle/50 rounded-lg px-3 py-2.5 text-white focus:ring-2 focus:ring-convexica-gold/50 outline-none text-base" />
-                </div>
-                <div>
-                  <label className="block text-xs uppercase font-bold text-slate-text/70 mb-2 tracking-widest">WAM (Mos)</label>
-                  <input type="number" value={pool.wam} onChange={(e) => setPool({ ...pool, wam: Number(e.target.value) })} className="w-full bg-deep-navy border border-white-subtle/50 rounded-lg px-3 py-2.5 text-white focus:ring-2 focus:ring-convexica-gold/50 outline-none text-base" />
-                </div>
-              </div>
+        {/* Asset Pool - Card (3/12) */}
+        <div className="lg:col-span-3 bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm flex flex-col">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-sm font-bold uppercase tracking-widest text-convexica-gold flex items-center gap-2">
+              <PieChart className="w-5 h-5" /> Asset Pool
+            </h2>
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-res-green/10 border border-res-green/20">
+               <div className="w-1.5 h-1.5 rounded-full bg-res-green animate-pulse"></div>
+               <span className="text-[10px] font-bold text-res-green uppercase tracking-tighter">Healthy</span>
             </div>
           </div>
-
-          {/* Market Data */}
-          <div className="bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm flex-1">
-            <h2 className="text-sm font-bold uppercase tracking-widest text-convexica-gold mb-6 flex items-center gap-2">
-              <Activity className="w-5 h-5" /> Market Data
-            </h2>
-            <div className="space-y-4">
-              <div className="p-3 bg-deep-navy/30 rounded-lg border border-white-subtle/10 mb-4 text-center">
-                <span className="text-[10px] uppercase font-bold text-slate-text/50 tracking-[0.2em]">Reference Yield Curve</span>
+          <div className="space-y-6">
+            <div>
+              <label className="block text-xs uppercase font-bold text-slate-text/70 mb-2 tracking-widest">Principal Balance</label>
+              <input
+                type="text"
+                value={formatNumber(pool.principalBalance)}
+                onChange={(e) => setPool({ ...pool, principalBalance: parseNumber(e.target.value) })}
+                className="w-full bg-deep-navy border border-white-subtle/50 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-convexica-gold/50 outline-none font-mono text-xl font-bold"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="block text-xs uppercase font-bold text-slate-text/70 mb-2 tracking-widest">WAC (%)</label>
+                <input type="number" step="0.01" value={pool.wac} onChange={(e) => setPool({ ...pool, wac: Number(e.target.value) })} className="w-full bg-deep-navy border border-white-subtle/50 rounded-lg px-3 py-2.5 text-white focus:ring-2 focus:ring-convexica-gold/50 outline-none text-base" />
               </div>
-              <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-                {(scenario.yieldCurve || []).map((pt, idx) => (
-                  <div key={idx} className="flex items-center justify-between group/curve">
-                    <span className="text-[11px] uppercase font-extrabold text-slate-text/60">{pt.tenor}Y</span>
-                    <div className="relative">
-                      <input 
-                        type="number" 
-                        step="0.05" 
-                        value={pt.rate} 
-                        onChange={(e) => {
-                          const newCurve = [...scenario.yieldCurve];
-                          newCurve[idx].rate = Number(e.target.value);
-                          setScenario({ ...scenario, yieldCurve: newCurve });
-                        }}
-                        className="w-16 bg-inst-blue/5 border border-inst-blue/20 text-xs font-mono font-bold text-inst-blue rounded px-2 py-1.5 text-right pr-5 outline-none focus:border-inst-blue/50 transition-all" 
-                      />
-                      <span className="absolute right-1 top-1.5 text-[10px] text-inst-blue/40">%</span>
-                    </div>
-                  </div>
-                ))}
+              <div>
+                <label className="block text-xs uppercase font-bold text-slate-text/70 mb-2 tracking-widest">WAM (Mos)</label>
+                <input type="number" value={pool.wam} onChange={(e) => setPool({ ...pool, wam: Number(e.target.value) })} className="w-full bg-deep-navy border border-white-subtle/50 rounded-lg px-3 py-2.5 text-white focus:ring-2 focus:ring-convexica-gold/50 outline-none text-base" />
               </div>
-              <div className="mt-4 pt-4 border-t border-white-subtle/5 flex items-center justify-center gap-2 text-res-green/60">
-                <ShieldCheck className="w-4 h-4" />
-                <span className="text-[9px] uppercase font-bold tracking-tighter">Linear Interpolation Active</span>
+            </div>
+            </div>
+          </div>
+          
+          <div className="mt-10 pt-6 border-t border-white-subtle/5">
+            <h3 className="text-[10px] uppercase font-bold text-slate-text/40 tracking-widest mb-4">Pool Composition Metrics</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 bg-deep-navy/30 rounded-xl border border-white-subtle/10">
+                <div className="text-[10px] text-slate-text/50 uppercase mb-1">Spread (WAC-Index)</div>
+                <div className="text-sm font-mono font-bold text-inst-blue">{(pool.wac - 6.5).toFixed(2)}%</div>
+              </div>
+              <div className="p-3 bg-deep-navy/30 rounded-xl border border-white-subtle/10">
+                <div className="text-[10px] text-slate-text/50 uppercase mb-1">Maturity Horizon</div>
+                <div className="text-sm font-mono font-bold text-white">{(pool.wam / 12).toFixed(1)} Yrs</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right Workspace: Scenario Assumptions */}
-        <div className="lg:col-span-8 bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm flex flex-col">
+        {/* Scenario Assumptions - Grid (6/12) */}
+        <div className="lg:col-span-6 bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm flex flex-col">
           <h2 className="text-sm font-bold uppercase tracking-widest text-convexica-gold mb-8 flex items-center gap-2">
             <TrendingUp className="w-5 h-5" /> Scenario Assumptions
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 flex-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 flex-grow">
             {/* CPR */}
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div className="flex justify-between items-center mb-1">
                 <label className="text-sm font-bold text-slate-text tracking-wide">CPR (Prepay)</label>
                 <div className="relative">
@@ -153,7 +132,7 @@ const DealInput: React.FC<DealInputProps> = ({
             </div>
 
             {/* CDR */}
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div className="flex justify-between items-center mb-1">
                 <label className="text-sm font-bold text-slate-text tracking-wide">CDR (Default)</label>
                 <div className="relative">
@@ -165,7 +144,7 @@ const DealInput: React.FC<DealInputProps> = ({
             </div>
 
             {/* Severity */}
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div className="flex justify-between items-center mb-1">
                 <label className="text-sm font-bold text-slate-text tracking-wide">Severity</label>
                 <div className="relative">
@@ -177,7 +156,7 @@ const DealInput: React.FC<DealInputProps> = ({
             </div>
 
             {/* Fee */}
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div className="flex justify-between items-center mb-1">
                 <label className="text-sm font-bold text-slate-text tracking-wide">Servicing Fee</label>
                 <div className="relative">
@@ -189,7 +168,7 @@ const DealInput: React.FC<DealInputProps> = ({
             </div>
 
             {/* Lag */}
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div className="flex justify-between items-center mb-1">
                 <label className="text-sm font-bold text-slate-text tracking-wide">Recov. Lag</label>
                 <div className="relative">
@@ -200,8 +179,8 @@ const DealInput: React.FC<DealInputProps> = ({
               <input type="range" min="0" max="36" step="1" value={scenario.recoveryLag} onChange={(e) => setScenario({ ...scenario, recoveryLag: Number(e.target.value) })} className="w-full h-2 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-risk-red" />
             </div>
 
-            {/* Turbo Trigger */}
-            <div className="space-y-4">
+            {/* Turbo Trigger (New) */}
+            <div className="space-y-3">
               <div className="flex justify-between items-center mb-1">
                 <label className="text-sm font-bold text-slate-text tracking-wide flex items-center gap-1">
                   Turbo Trigger <span className="text-[10px] text-convexica-gold font-normal">(Cum. Def %)</span>
@@ -218,6 +197,67 @@ const DealInput: React.FC<DealInputProps> = ({
                 </div>
               </div>
               <input type="range" min="0" max="25" step="0.5" value={scenario.turboTriggerPct || 0} onChange={(e) => setScenario({ ...scenario, turboTriggerPct: Number(e.target.value) })} className="w-full h-2 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-convexica-gold" />
+            </div>
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-white-subtle/5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-[10px] uppercase font-bold text-slate-text/40 tracking-widest">Scenario Quick-Presets</h3>
+              <span className="text-[9px] text-inst-blue font-bold uppercase cursor-pointer hover:underline">Custom Config Active</span>
+            </div>
+            <div className="flex gap-3">
+              {[
+                { name: 'Base Case', cpr: 10, cdr: 1.5, severity: 40 },
+                { name: 'Moderate Stress', cpr: 15, cdr: 5, severity: 50 },
+                { name: 'Severe Recession', cpr: 20, cdr: 10, severity: 65 }
+              ].map(p => (
+                <button 
+                  key={p.name}
+                  onClick={() => setScenario({ ...scenario, cpr: p.cpr, cdr: p.cdr, severity: p.severity })}
+                  className="px-4 py-2 bg-deep-navy border border-white-subtle/20 rounded-lg text-[10px] font-bold uppercase tracking-widest text-slate-text/70 hover:border-convexica-gold/40 hover:text-convexica-gold hover:bg-convexica-gold/5 transition-all"
+                >
+                  {p.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Market Data - Card (3/12) */}
+        <div className="lg:col-span-3 bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-convexica-gold mb-6 flex items-center gap-2">
+            <Activity className="w-5 h-5" /> Market Data
+          </h2>
+          <div className="space-y-4">
+            <div className="p-3 bg-deep-navy/30 rounded-lg border border-white-subtle/10 mb-4">
+              <span className="text-[10px] uppercase font-bold text-slate-text/50 tracking-widest">Reference Yield Curve</span>
+            </div>
+            <div className="space-y-3">
+              {(scenario.yieldCurve || []).map((pt, idx) => (
+                <div key={idx} className="flex items-center justify-between group/curve">
+                  <span className="text-[11px] uppercase font-extrabold text-slate-text/60">{pt.tenor} Year</span>
+                  <div className="relative">
+                    <input 
+                      type="number" 
+                      step="0.05" 
+                      value={pt.rate} 
+                      onChange={(e) => {
+                        const newCurve = [...scenario.yieldCurve];
+                        newCurve[idx].rate = Number(e.target.value);
+                        setScenario({ ...scenario, yieldCurve: newCurve });
+                      }}
+                      className="w-20 bg-inst-blue/5 border border-inst-blue/20 text-xs font-mono font-bold text-inst-blue rounded px-2 py-1.5 text-right pr-6 outline-none focus:border-inst-blue/50 transition-all" 
+                    />
+                    <span className="absolute right-2 top-1.5 text-[10px] text-inst-blue/40">%</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 pt-4 border-t border-white-subtle/5">
+              <div className="flex items-center gap-2 text-res-green/60">
+                <ShieldCheck className="w-4 h-4" />
+                <span className="text-[9px] uppercase font-bold tracking-tighter">Linear Interpolation Active</span>
+              </div>
             </div>
           </div>
         </div>
