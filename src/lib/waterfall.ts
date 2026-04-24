@@ -39,6 +39,7 @@ export const runCashFlowEngine = (
     poolDefaultAmount: 0,
     poolLoss: 0,
     poolRecovery: 0,
+    poolServicingFee: 0,
     excessSpread: 0,
     trancheCashflows: {}
   };
@@ -103,6 +104,7 @@ export const runCashFlowEngine = (
       poolDefaultAmount: defaults,
       poolLoss: grossLoss,
       poolRecovery: recoveryThisMonth,
+      poolServicingFee: servicingFee,
       excessSpread: 0,
       trancheCashflows: {}
     };

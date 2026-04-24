@@ -48,6 +48,7 @@ export interface CashFlowPeriod {
   poolDefaultAmount: number;
   poolLoss: number;
   poolRecovery: number;
+  poolServicingFee: number;
   excessSpread: number; // Residual cash after all collections and fees
   
   trancheCashflows: Record<string, {
