@@ -96,7 +96,7 @@ const DealInput: React.FC<DealInputProps> = ({
 
         {/* Scenario Assumptions - Grid (6/12) */}
         <div className="lg:col-span-6 bg-charcoal p-5 rounded-xl border border-white-subtle shadow-sm">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-inst-blue mb-5 flex items-center gap-2">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-convexica-gold mb-5 flex items-center gap-2">
             <TrendingUp className="w-4 h-4" /> Scenario Assumptions
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
