@@ -1,4 +1,4 @@
-const GEMINI_MODEL = "gemini-2.5-flash-lite";
+const GEMINI_MODEL = "gemini-pro";
 const GEMINI_URL = (apiKey: string) =>
   `https://generativelanguage.googleapis.com/v1/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
 
@@ -14,6 +14,7 @@ async function callGemini(apiKey: string, prompt: string): Promise<string> {
   const data = await response.json() as any;
 
   if (!response.ok) {
+    console.error("[Gemini API Error]", data?.error);
     throw new Error(data?.error?.message || `Gemini API error ${response.status}`);
   }
 
@@ -27,7 +28,8 @@ export const handler = async (event: any) => {
 
   const apiKey = process.env.CONVEX_GEMINI_KEY || "";
   if (!apiKey) {
-    return { statusCode: 500, body: JSON.stringify({ error: "AI service is not configured." }) };
+    console.warn("[optimize] Warning: CONVEX_GEMINI_KEY is missing from environment.");
+    return { statusCode: 500, body: JSON.stringify({ error: "AI service is not configured (Missing API Key)." }) };
   }
 
   try {
