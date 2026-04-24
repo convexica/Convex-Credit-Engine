@@ -61,158 +61,163 @@ const DealInput: React.FC<DealInputProps> = ({
   return (
     <div className="space-y-4 text-silver-text max-w-[1600px] mx-auto">
       
-      {/* Top Section: Pool, Scenario, and Market Data */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+      {/* Top Section: Sidebar (Pool & Market) and Main Workspace (Scenario) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8 items-stretch">
         
-        {/* Asset Pool - Card (3/12) */}
-        <div className="lg:col-span-3 bg-charcoal p-5 rounded-xl border border-white-subtle shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-convexica-gold flex items-center gap-2">
-              <PieChart className="w-4 h-4" /> Asset Pool
-            </h2>
-          </div>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-[10px] uppercase font-bold text-slate-text/50 mb-1.5 tracking-widest">Principal Balance</label>
-              <input
-                type="text"
-                value={formatNumber(pool.principalBalance)}
-                onChange={(e) => setPool({ ...pool, principalBalance: parseNumber(e.target.value) })}
-                className="w-full bg-deep-navy border border-white-subtle/30 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-convexica-gold/50 outline-none font-mono text-lg font-bold"
-              />
+        {/* Left Sidebar: Asset Pool & Market Data */}
+        <div className="lg:col-span-4 space-y-8 flex flex-col">
+          {/* Asset Pool */}
+          <div className="bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm flex-1">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-sm font-bold uppercase tracking-widest text-convexica-gold flex items-center gap-2">
+                <PieChart className="w-5 h-5" /> Asset Pool
+              </h2>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-6">
               <div>
-                <label className="block text-[10px] uppercase font-bold text-slate-text/50 mb-1 tracking-widest">WAC</label>
-                <input type="number" step="0.01" value={pool.wac} onChange={(e) => setPool({ ...pool, wac: Number(e.target.value) })} className="w-full bg-deep-navy/50 border border-white-subtle/20 rounded-md px-2 py-1.5 text-white outline-none text-sm font-mono" />
+                <label className="block text-xs uppercase font-bold text-slate-text/70 mb-2 tracking-widest">Principal Balance</label>
+                <input
+                  type="text"
+                  value={formatNumber(pool.principalBalance)}
+                  onChange={(e) => setPool({ ...pool, principalBalance: parseNumber(e.target.value) })}
+                  className="w-full bg-deep-navy border border-white-subtle/50 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-convexica-gold/50 outline-none font-mono text-xl font-bold"
+                />
               </div>
-              <div>
-                <label className="block text-[10px] uppercase font-bold text-slate-text/50 mb-1 tracking-widest">WAM</label>
-                <input type="number" value={pool.wam} onChange={(e) => setPool({ ...pool, wam: Number(e.target.value) })} className="w-full bg-deep-navy/50 border border-white-subtle/20 rounded-md px-2 py-1.5 text-white outline-none text-sm font-mono" />
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs uppercase font-bold text-slate-text/70 mb-2 tracking-widest">WAC (%)</label>
+                  <input type="number" step="0.01" value={pool.wac} onChange={(e) => setPool({ ...pool, wac: Number(e.target.value) })} className="w-full bg-deep-navy border border-white-subtle/50 rounded-lg px-3 py-2.5 text-white focus:ring-2 focus:ring-convexica-gold/50 outline-none text-base" />
+                </div>
+                <div>
+                  <label className="block text-xs uppercase font-bold text-slate-text/70 mb-2 tracking-widest">WAM (Mos)</label>
+                  <input type="number" value={pool.wam} onChange={(e) => setPool({ ...pool, wam: Number(e.target.value) })} className="w-full bg-deep-navy border border-white-subtle/50 rounded-lg px-3 py-2.5 text-white focus:ring-2 focus:ring-convexica-gold/50 outline-none text-base" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Market Data */}
+          <div className="bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm flex-1">
+            <h2 className="text-sm font-bold uppercase tracking-widest text-convexica-gold mb-6 flex items-center gap-2">
+              <Activity className="w-5 h-5" /> Market Data
+            </h2>
+            <div className="space-y-4">
+              <div className="p-3 bg-deep-navy/30 rounded-lg border border-white-subtle/10 mb-4 text-center">
+                <span className="text-[10px] uppercase font-bold text-slate-text/50 tracking-[0.2em]">Reference Yield Curve</span>
+              </div>
+              <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                {(scenario.yieldCurve || []).map((pt, idx) => (
+                  <div key={idx} className="flex items-center justify-between group/curve">
+                    <span className="text-[11px] uppercase font-extrabold text-slate-text/60">{pt.tenor}Y</span>
+                    <div className="relative">
+                      <input 
+                        type="number" 
+                        step="0.05" 
+                        value={pt.rate} 
+                        onChange={(e) => {
+                          const newCurve = [...scenario.yieldCurve];
+                          newCurve[idx].rate = Number(e.target.value);
+                          setScenario({ ...scenario, yieldCurve: newCurve });
+                        }}
+                        className="w-16 bg-inst-blue/5 border border-inst-blue/20 text-xs font-mono font-bold text-inst-blue rounded px-2 py-1.5 text-right pr-5 outline-none focus:border-inst-blue/50 transition-all" 
+                      />
+                      <span className="absolute right-1 top-1.5 text-[10px] text-inst-blue/40">%</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 pt-4 border-t border-white-subtle/5 flex items-center justify-center gap-2 text-res-green/60">
+                <ShieldCheck className="w-4 h-4" />
+                <span className="text-[9px] uppercase font-bold tracking-tighter">Linear Interpolation Active</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Scenario Assumptions - Grid (6/12) */}
-        <div className="lg:col-span-6 bg-charcoal p-5 rounded-xl border border-white-subtle shadow-sm">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-convexica-gold mb-5 flex items-center gap-2">
-            <TrendingUp className="w-4 h-4" /> Scenario Assumptions
+        {/* Right Workspace: Scenario Assumptions */}
+        <div className="lg:col-span-8 bg-charcoal p-6 rounded-xl border border-white-subtle shadow-sm flex flex-col">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-convexica-gold mb-8 flex items-center gap-2">
+            <TrendingUp className="w-5 h-5" /> Scenario Assumptions
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 flex-1">
             {/* CPR */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-center mb-0.5">
-                <label className="text-[11px] font-bold text-slate-text/80 uppercase tracking-tight">CPR</label>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center mb-1">
+                <label className="text-sm font-bold text-slate-text tracking-wide">CPR (Prepay)</label>
                 <div className="relative">
-                  <input type="number" step="0.5" value={scenario.cpr} onChange={(e) => setScenario({ ...scenario, cpr: Number(e.target.value) })} className="w-16 bg-inst-blue/5 border border-inst-blue/20 text-xs font-mono font-bold text-inst-blue rounded px-1.5 py-0.5 text-right pr-4 outline-none" />
-                  <span className="absolute right-1 top-1 text-[9px] text-inst-blue/50">%</span>
+                  <input type="number" step="0.5" value={scenario.cpr} onChange={(e) => setScenario({ ...scenario, cpr: Number(e.target.value) })} className="w-24 bg-inst-blue/5 border border-inst-blue/20 text-sm font-mono font-bold text-inst-blue rounded-lg text-right pr-6 py-1 outline-none focus:border-inst-blue/50" />
+                  <span className="absolute right-2 top-1.5 text-xs text-inst-blue/50">%</span>
                 </div>
               </div>
-              <input type="range" min="0" max="50" step="0.5" value={scenario.cpr} onChange={(e) => setScenario({ ...scenario, cpr: Number(e.target.value) })} className="w-full h-1 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-inst-blue" />
+              <input type="range" min="0" max="50" step="0.5" value={scenario.cpr} onChange={(e) => setScenario({ ...scenario, cpr: Number(e.target.value) })} className="w-full h-2 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-inst-blue" />
             </div>
 
             {/* CDR */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-center mb-0.5">
-                <label className="text-[11px] font-bold text-slate-text/80 uppercase tracking-tight">CDR</label>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center mb-1">
+                <label className="text-sm font-bold text-slate-text tracking-wide">CDR (Default)</label>
                 <div className="relative">
-                  <input type="number" step="0.1" value={scenario.cdr} onChange={(e) => setScenario({ ...scenario, cdr: Number(e.target.value) })} className="w-16 bg-risk-red/5 border border-risk-red/20 text-xs font-mono font-bold text-risk-red rounded px-1.5 py-0.5 text-right pr-4 outline-none" />
-                  <span className="absolute right-1 top-1 text-[9px] text-risk-red/50">%</span>
+                  <input type="number" step="0.1" value={scenario.cdr} onChange={(e) => setScenario({ ...scenario, cdr: Number(e.target.value) })} className="w-24 bg-risk-red/5 border border-risk-red/20 text-sm font-mono font-bold text-risk-red rounded-lg text-right pr-6 py-1 outline-none focus:border-risk-red/50" />
+                  <span className="absolute right-2 top-1.5 text-xs text-risk-red/50">%</span>
                 </div>
               </div>
-              <input type="range" min="0" max="50" step="0.1" value={scenario.cdr} onChange={(e) => setScenario({ ...scenario, cdr: Number(e.target.value) })} className="w-full h-1 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-risk-red" />
+              <input type="range" min="0" max="50" step="0.1" value={scenario.cdr} onChange={(e) => setScenario({ ...scenario, cdr: Number(e.target.value) })} className="w-full h-2 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-risk-red" />
             </div>
 
             {/* Severity */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-center mb-0.5">
-                <label className="text-[11px] font-bold text-slate-text/80 uppercase tracking-tight">Severity</label>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center mb-1">
+                <label className="text-sm font-bold text-slate-text tracking-wide">Severity</label>
                 <div className="relative">
-                  <input type="number" step="1" value={scenario.severity} onChange={(e) => setScenario({ ...scenario, severity: Number(e.target.value) })} className="w-16 bg-convexica-gold/5 border border-convexica-gold/20 text-xs font-mono font-bold text-convexica-gold rounded px-1.5 py-0.5 text-right pr-4 outline-none" />
-                  <span className="absolute right-1 top-1 text-[9px] text-convexica-gold/50">%</span>
+                  <input type="number" step="1" value={scenario.severity} onChange={(e) => setScenario({ ...scenario, severity: Number(e.target.value) })} className="w-24 bg-convexica-gold/5 border border-convexica-gold/20 text-sm font-mono font-bold text-convexica-gold rounded-lg text-right pr-6 py-1 outline-none focus:border-convexica-gold/50" />
+                  <span className="absolute right-2 top-1.5 text-xs text-convexica-gold/50">%</span>
                 </div>
               </div>
-              <input type="range" min="0" max="100" step="1" value={scenario.severity} onChange={(e) => setScenario({ ...scenario, severity: Number(e.target.value) })} className="w-full h-1 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-convexica-gold" />
+              <input type="range" min="0" max="100" step="1" value={scenario.severity} onChange={(e) => setScenario({ ...scenario, severity: Number(e.target.value) })} className="w-full h-2 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-convexica-gold" />
             </div>
 
             {/* Fee */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-center mb-0.5">
-                <label className="text-[11px] font-bold text-slate-text/80 uppercase tracking-tight">Serv. Fee</label>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center mb-1">
+                <label className="text-sm font-bold text-slate-text tracking-wide">Servicing Fee</label>
                 <div className="relative">
-                  <input type="number" step="0.05" value={scenario.servicingFee} onChange={(e) => setScenario({ ...scenario, servicingFee: Number(e.target.value) })} className="w-16 bg-inst-blue/5 border border-inst-blue/20 text-xs font-mono font-bold text-inst-blue rounded px-1.5 py-0.5 text-right pr-4 outline-none" />
-                  <span className="absolute right-1 top-1 text-[9px] text-inst-blue/50">%</span>
+                  <input type="number" step="0.05" value={scenario.servicingFee} onChange={(e) => setScenario({ ...scenario, servicingFee: Number(e.target.value) })} className="w-24 bg-inst-blue/5 border border-inst-blue/20 text-sm font-mono font-bold text-inst-blue rounded-lg text-right pr-6 py-1 outline-none" />
+                  <span className="absolute right-2 top-1.5 text-xs text-inst-blue/50">%</span>
                 </div>
               </div>
-              <input type="range" min="0" max="5" step="0.05" value={scenario.servicingFee} onChange={(e) => setScenario({ ...scenario, servicingFee: Number(e.target.value) })} className="w-full h-1 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-inst-blue" />
+              <input type="range" min="0" max="5" step="0.05" value={scenario.servicingFee} onChange={(e) => setScenario({ ...scenario, servicingFee: Number(e.target.value) })} className="w-full h-2 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-inst-blue" />
             </div>
 
             {/* Lag */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-center mb-0.5">
-                <label className="text-[11px] font-bold text-slate-text/80 uppercase tracking-tight">Lag</label>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center mb-1">
+                <label className="text-sm font-bold text-slate-text tracking-wide">Recov. Lag</label>
                 <div className="relative">
-                  <input type="number" step="1" value={scenario.recoveryLag} onChange={(e) => setScenario({ ...scenario, recoveryLag: Number(e.target.value) })} className="w-16 bg-risk-red/5 border border-risk-red/20 text-xs font-mono font-bold text-risk-red rounded px-1.5 py-0.5 text-right pr-4 outline-none" />
-                  <span className="absolute right-1 top-1 text-[9px] text-risk-red/50">M</span>
+                  <input type="number" step="1" value={scenario.recoveryLag} onChange={(e) => setScenario({ ...scenario, recoveryLag: Number(e.target.value) })} className="w-24 bg-risk-red/5 border border-risk-red/20 text-sm font-mono font-bold text-risk-red rounded-lg text-right pr-6 py-1 outline-none" />
+                  <span className="absolute right-2 top-1.5 text-xs text-risk-red/50">M</span>
                 </div>
               </div>
-              <input type="range" min="0" max="36" step="1" value={scenario.recoveryLag} onChange={(e) => setScenario({ ...scenario, recoveryLag: Number(e.target.value) })} className="w-full h-1 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-risk-red" />
+              <input type="range" min="0" max="36" step="1" value={scenario.recoveryLag} onChange={(e) => setScenario({ ...scenario, recoveryLag: Number(e.target.value) })} className="w-full h-2 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-risk-red" />
             </div>
 
             {/* Turbo Trigger */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-center mb-0.5">
-                <label className="text-[11px] font-bold text-slate-text/80 uppercase tracking-tight">Turbo</label>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center mb-1">
+                <label className="text-sm font-bold text-slate-text tracking-wide flex items-center gap-1">
+                  Turbo Trigger <span className="text-[10px] text-convexica-gold font-normal">(Cum. Def %)</span>
+                </label>
                 <div className="relative">
                   <input 
                     type="number" 
                     step="0.5" 
                     value={scenario.turboTriggerPct || 0} 
                     onChange={(e) => setScenario({ ...scenario, turboTriggerPct: Number(e.target.value) })} 
-                    className="w-16 bg-convexica-gold/5 border border-convexica-gold/20 text-xs font-mono font-bold text-convexica-gold rounded px-1.5 py-0.5 text-right pr-4 outline-none" 
+                    className="w-24 bg-convexica-gold/5 border border-convexica-gold/20 text-sm font-mono font-bold text-convexica-gold rounded-lg text-right pr-6 py-1 outline-none focus:border-convexica-gold/50" 
                   />
-                  <span className="absolute right-1 top-1 text-[9px] text-convexica-gold/50">%</span>
+                  <span className="absolute right-2 top-1.5 text-xs text-convexica-gold/50">%</span>
                 </div>
               </div>
-              <input type="range" min="0" max="25" step="0.5" value={scenario.turboTriggerPct || 0} onChange={(e) => setScenario({ ...scenario, turboTriggerPct: Number(e.target.value) })} className="w-full h-1 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-convexica-gold" />
-            </div>
-          </div>
-        </div>
-
-        {/* Market Data - Card (3/12) */}
-        <div className="lg:col-span-3 bg-charcoal p-5 rounded-xl border border-white-subtle shadow-sm">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-convexica-gold mb-5 flex items-center gap-2">
-            <Activity className="w-4 h-4" /> Market Data
-          </h2>
-          <div className="space-y-3">
-            <div className="p-2.5 bg-deep-navy/30 rounded-lg border border-white-subtle/10 mb-3 text-center">
-              <span className="text-[9px] uppercase font-bold text-slate-text/40 tracking-widest">Reference Yield Curve</span>
-            </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-              {(scenario.yieldCurve || []).map((pt, idx) => (
-                <div key={idx} className="flex flex-col gap-1">
-                  <span className="text-[9px] uppercase font-extrabold text-slate-text/50">{pt.tenor}Y</span>
-                  <div className="relative">
-                    <input 
-                      type="number" 
-                      step="0.05" 
-                      value={pt.rate} 
-                      onChange={(e) => {
-                        const newCurve = [...scenario.yieldCurve];
-                        newCurve[idx].rate = Number(e.target.value);
-                        setScenario({ ...scenario, yieldCurve: newCurve });
-                      }}
-                      className="w-full bg-inst-blue/5 border border-inst-blue/20 text-xs font-mono font-bold text-inst-blue rounded px-1.5 py-1 text-right pr-5 outline-none focus:border-inst-blue/50 transition-all" 
-                    />
-                    <span className="absolute right-1 top-1 text-[9px] text-inst-blue/40">%</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 pt-3 border-t border-white-subtle/5 flex items-center justify-center gap-1.5 opacity-60">
-              <ShieldCheck className="w-3 h-3 text-res-green" />
-              <span className="text-[8px] uppercase font-bold tracking-tighter text-slate-text">Interpolation Active</span>
+              <input type="range" min="0" max="25" step="0.5" value={scenario.turboTriggerPct || 0} onChange={(e) => setScenario({ ...scenario, turboTriggerPct: Number(e.target.value) })} className="w-full h-2 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-convexica-gold" />
             </div>
           </div>
         </div>
