@@ -37,6 +37,7 @@ export interface Scenario {
   servicingFee: number; // Annual Servicing Fee (%)
   recoveryLag: number; // Months to Recovery
   turboTriggerPct?: number; // Cumulative Default % that triggers Senior Principal Redirection
+  benchmarkRate: number; // Base Risk-Free or Swap Rate (%)
 }
 
 export interface CashFlowPeriod {

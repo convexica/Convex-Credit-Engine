@@ -35,6 +35,7 @@ const DEFAULT_SCENARIO: Scenario = {
   servicingFee: 0.5,
   recoveryLag: 6,
   turboTriggerPct: 5.0, // Default institutional trigger
+  benchmarkRate: 7.50,
 };
 
 function App() {
@@ -177,7 +178,7 @@ function App() {
               <ExecutiveSummary tranches={tranches} data={cashFlows} pool={pool} scenario={scenario} />
               
               {/* Metrics Table First */}
-              <MetricsTable tranches={tranches} data={cashFlows} />
+              <MetricsTable tranches={tranches} data={cashFlows} scenario={scenario} />
               {/* AI Analyst Second */}
               <AIAnalyst pool={pool} tranches={tranches} scenario={scenario} />
             </motion.div>

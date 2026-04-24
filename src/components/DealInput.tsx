@@ -169,6 +169,26 @@ const DealInput: React.FC<DealInputProps> = ({
               </div>
               <input type="range" min="0" max="25" step="0.5" value={scenario.turboTriggerPct || 0} onChange={(e) => setScenario({ ...scenario, turboTriggerPct: Number(e.target.value) })} className="w-full h-2 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-convexica-gold" />
             </div>
+
+            {/* Benchmark Rate (New) */}
+            <div className="space-y-3">
+              <div className="flex justify-between items-center mb-1">
+                <label className="text-sm font-bold text-slate-text tracking-wide flex items-center gap-1">
+                  Benchmark <span className="text-[10px] text-inst-blue font-normal">(Rate %)</span>
+                </label>
+                <div className="relative">
+                  <input 
+                    type="number" 
+                    step="0.05" 
+                    value={scenario.benchmarkRate || 0} 
+                    onChange={(e) => setScenario({ ...scenario, benchmarkRate: Number(e.target.value) })} 
+                    className="w-24 bg-inst-blue/5 border border-inst-blue/20 text-sm font-mono font-bold text-inst-blue rounded-lg text-right pr-6 py-1 outline-none focus:border-inst-blue/50" 
+                  />
+                  <span className="absolute right-2 top-1.5 text-xs text-inst-blue/50">%</span>
+                </div>
+              </div>
+              <input type="range" min="0" max="15" step="0.05" value={scenario.benchmarkRate || 0} onChange={(e) => setScenario({ ...scenario, benchmarkRate: Number(e.target.value) })} className="w-full h-2 bg-deep-navy rounded-lg appearance-none cursor-pointer accent-inst-blue" />
+            </div>
           </div>
         </div>
       </div>

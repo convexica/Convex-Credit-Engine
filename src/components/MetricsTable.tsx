@@ -1,15 +1,16 @@
 import React from 'react';
-import { Tranche, CashFlowPeriod } from '@/types';
+import { Tranche, CashFlowPeriod, Scenario } from '@/types';
 import { calculateWAL, calculateIRR, calculateModifiedDuration } from '@/lib/waterfall';
 
 interface MetricsTableProps {
   tranches: Tranche[];
   data: CashFlowPeriod[];
+  scenario: Scenario;
 }
 
-const MetricsTable: React.FC<MetricsTableProps> = ({ tranches, data }) => {
+const MetricsTable: React.FC<MetricsTableProps> = ({ tranches, data, scenario }) => {
   const totalBalance = tranches.reduce((sum, t) => sum + t.originalBalance, 0);
-  const benchmarkRate = 7.50; // Reference G-Sec / Benchmark
+  const benchmarkRate = scenario.benchmarkRate; // Use dynamic benchmark from scenario
 
   return (
     <div className="bg-charcoal rounded-xl border border-white-subtle shadow-sm overflow-hidden">
