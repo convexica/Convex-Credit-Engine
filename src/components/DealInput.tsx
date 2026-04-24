@@ -1,5 +1,6 @@
 import React from 'react';
 import { AssetPool, Tranche, TrancheType, Scenario } from '@/types';
+import { interpolateYield } from '@/lib/curve';
 import { 
   Plus, 
   Trash2, 
@@ -101,7 +102,9 @@ const DealInput: React.FC<DealInputProps> = ({
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-3 bg-deep-navy/30 rounded-xl border border-white-subtle/10">
                   <div className="text-[10px] text-slate-text/50 uppercase mb-1">Spread (WAC-Index)</div>
-                  <div className="text-sm font-mono font-bold text-inst-blue">{(pool.wac - 6.5).toFixed(2)}%</div>
+                  <div className="text-sm font-mono font-bold text-inst-blue">
+                    {(pool.wac - interpolateYield(scenario.yieldCurve || [], pool.wam / 12)).toFixed(2)}%
+                  </div>
                 </div>
                 <div className="p-3 bg-deep-navy/30 rounded-xl border border-white-subtle/10">
                   <div className="text-[10px] text-slate-text/50 uppercase mb-1">Maturity Horizon</div>
